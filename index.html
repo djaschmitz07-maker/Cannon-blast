@@ -1,0 +1,1960 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cannon Blast: Rock Breaker</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: none;
+        }
+
+        body {
+            background-color: #0b1120;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+        }
+
+        /* Fixed 9:16 portrait aspect ratio container that fits cleanly on both desktop and mobile */
+        #game-container {
+            position: relative;
+            aspect-ratio: 9 / 16;
+            height: 100vh;
+            height: 100dvh;
+            width: auto;
+            max-width: 100vw;
+            max-height: 100dvh;
+            background: linear-gradient(180deg, #1e293b 0%, #3b82f6 65%, #93c5fd 100%);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.75);
+            overflow: hidden;
+        }
+
+        /* On narrow mobile screens where width is the limiting dimension, fill width & center vertically */
+        @media (max-aspect-ratio: 9/16) {
+            #game-container {
+                width: 100vw;
+                height: auto;
+                max-height: 100dvh;
+            }
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* HUD */
+        #hud {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: clamp(8px, 2%, 14px) clamp(8px, 2.2%, 16px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 4px;
+            pointer-events: none;
+            z-index: 10;
+            transition: opacity 0.2s ease;
+        }
+
+        #hud.hidden {
+            opacity: 0;
+        }
+
+        .hud-badge {
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(4px);
+            color: #ffffff;
+            padding: clamp(4px, 1.2%, 7px) clamp(7px, 2%, 11px);
+            border-radius: 20px;
+            font-weight: 800;
+            font-size: clamp(0.65rem, 2.2vw, 0.88rem);
+            letter-spacing: 0.3px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            white-space: nowrap;
+        }
+
+        .hud-badge span {
+            color: #fbbf24;
+        }
+
+        .hud-badge.nugget-badge {
+            border-color: rgba(250, 204, 21, 0.55);
+            background: rgba(30, 27, 15, 0.72);
+        }
+
+        .hud-badge.nugget-badge span {
+            color: #fde047;
+        }
+
+        .hud-pause-btn {
+            pointer-events: auto;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(4px);
+            color: #ffffff;
+            border: 2px solid rgba(255, 255, 255, 0.45);
+            border-radius: 14px;
+            padding: clamp(5px, 1.4%, 8px) clamp(10px, 2.6%, 14px);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            font-size: clamp(0.7rem, 2.3vw, 0.88rem);
+            font-weight: 900;
+            letter-spacing: 0.4px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+            flex-shrink: 0;
+            z-index: 12;
+        }
+
+        .hud-pause-btn:active {
+            transform: scale(0.92);
+        }
+
+        /* Level Up Banner */
+        #levelBanner {
+            position: absolute;
+            top: 16%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.85);
+            background: rgba(15, 23, 42, 0.85);
+            border: 2px solid #fbbf24;
+            color: #fde047;
+            padding: 10px 26px;
+            border-radius: 30px;
+            font-size: clamp(1.1rem, 4vw, 1.45rem);
+            font-weight: 900;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            z-index: 15;
+            white-space: nowrap;
+        }
+
+        #levelBanner.show {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        /* Control Zone Hints */
+        .touch-hint {
+            position: absolute;
+            bottom: 11%;
+            font-size: clamp(0.75rem, 2.5vw, 0.9rem);
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.6);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+
+        #hint-left {
+            left: 5%;
+        }
+
+        #hint-right {
+            right: 5%;
+        }
+
+        /* Overlays & Main Menu */
+        .overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.78);
+            backdrop-filter: blur(6px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            z-index: 20;
+            color: white;
+            transition: opacity 0.25s ease;
+        }
+
+        .overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .menu-header-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: clamp(10px, 2.4%, 16px) clamp(12px, 3%, 18px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .top-back-link {
+            background: rgba(15, 23, 42, 0.78);
+            backdrop-filter: blur(4px);
+            color: #f8fafc;
+            padding: clamp(5px, 1.3%, 8px) clamp(10px, 2.4%, 14px);
+            border-radius: 20px;
+            font-weight: 800;
+            font-size: clamp(0.66rem, 2.2vw, 0.85rem);
+            letter-spacing: 0.3px;
+            border: 2px solid rgba(255, 255, 255, 0.28);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.28);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            white-space: nowrap;
+            transition: transform 0.1s ease, background 0.15s ease;
+        }
+
+        .top-back-link:active {
+            transform: scale(0.95);
+        }
+
+        .game-title {
+            font-size: clamp(2.1rem, 8.5vw, 3rem);
+            font-weight: 900;
+            line-height: 1.02;
+            margin-bottom: 6px;
+            background: linear-gradient(135deg, #fde047 0%, #f97316 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            filter: drop-shadow(0 4px 10px rgba(0,0,0,0.45));
+        }
+
+        .title-tagline {
+            font-size: clamp(0.75rem, 2.6vw, 0.88rem);
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #93c5fd;
+            margin-bottom: 10px;
+        }
+
+        .menu-best-badge {
+            margin-bottom: 16px;
+        }
+
+        /* Main Menu Navigation Tabs / Views */
+        .menu-panel {
+            width: 100%;
+            max-width: 330px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .menu-panel.hidden {
+            display: none;
+        }
+
+        .btn {
+            background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%);
+            color: white;
+            border: none;
+            padding: 14px 36px;
+            font-size: clamp(1.05rem, 3.8vw, 1.25rem);
+            font-weight: 800;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 6px 0 #14532d, 0 12px 24px rgba(0, 0, 0, 0.4);
+            transition: transform 0.1s ease, box-shadow 0.1s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            width: 100%;
+            max-width: 260px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #14532d, 0 6px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%);
+            box-shadow: 0 5px 0 #1e3a8a, 0 10px 20px rgba(0, 0, 0, 0.35);
+            padding: 11px 26px;
+            font-size: clamp(0.9rem, 3.2vw, 1.05rem);
+        }
+
+        .btn-secondary:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 #1e3a8a, 0 5px 10px rgba(0, 0, 0, 0.35);
+        }
+
+        .btn-gold {
+            background: linear-gradient(180deg, #facc15 0%, #eab308 100%);
+            color: #1e1b0f;
+            box-shadow: 0 5px 0 #854d0e, 0 10px 20px rgba(0, 0, 0, 0.35);
+            padding: 11px 26px;
+            font-size: clamp(0.9rem, 3.2vw, 1.05rem);
+        }
+
+        .btn-gold:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 #854d0e, 0 5px 10px rgba(0, 0, 0, 0.35);
+        }
+
+        .btn-dark {
+            background: linear-gradient(180deg, #475569 0%, #334155 100%);
+            box-shadow: 0 5px 0 #0f172a, 0 10px 20px rgba(0, 0, 0, 0.35);
+            padding: 11px 26px;
+            font-size: clamp(0.9rem, 3.2vw, 1.05rem);
+        }
+
+        .btn-dark:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 #0f172a, 0 5px 10px rgba(0, 0, 0, 0.35);
+        }
+
+        /* Admin Test Toggle Button */
+        .btn-admin {
+            background: linear-gradient(180deg, #475569 0%, #334155 100%);
+            color: #e2e8f0;
+            box-shadow: 0 5px 0 #0f172a, 0 10px 20px rgba(0, 0, 0, 0.35);
+            padding: 10px 22px;
+            font-size: clamp(0.84rem, 3vw, 0.96rem);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-admin.active {
+            background: linear-gradient(180deg, #a855f7 0%, #7e22ce 100%);
+            color: #ffffff;
+            border-color: #f3e8ff;
+            box-shadow: 0 5px 0 #4c1d95, 0 0 18px rgba(168, 85, 247, 0.6);
+        }
+
+        .btn-admin:active {
+            transform: translateY(3px);
+        }
+
+        /* Upgrade Cards */
+        .upgrade-list {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 6px;
+        }
+
+        .upgrade-card {
+            background: rgba(30, 41, 59, 0.92);
+            border: 2px solid rgba(255, 255, 255, 0.16);
+            border-radius: 16px;
+            padding: 10px 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-align: left;
+            gap: 10px;
+        }
+
+        .upgrade-info h3 {
+            font-size: clamp(0.88rem, 3.1vw, 1rem);
+            font-weight: 800;
+            color: #f8fafc;
+            margin-bottom: 2px;
+        }
+
+        .upgrade-info p {
+            font-size: clamp(0.72rem, 2.5vw, 0.8rem);
+            color: #94a3b8;
+        }
+
+        .upgrade-buy-btn {
+            background: linear-gradient(180deg, #facc15 0%, #eab308 100%);
+            color: #1e1b0f;
+            border: none;
+            border-radius: 12px;
+            padding: 8px 12px;
+            font-weight: 900;
+            font-size: clamp(0.76rem, 2.6vw, 0.86rem);
+            cursor: pointer;
+            box-shadow: 0 3px 0 #854d0e;
+            white-space: nowrap;
+            min-width: 74px;
+        }
+
+        .upgrade-buy-btn:disabled {
+            background: #334155;
+            color: #94a3b8;
+            box-shadow: 0 3px 0 #1e293b;
+            cursor: not-allowed;
+        }
+
+        .upgrade-buy-btn:not(:disabled):active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 #854d0e;
+        }
+
+        /* How to Play Card */
+        .rules-card {
+            background: rgba(30, 41, 59, 0.92);
+            border: 2px solid rgba(255, 255, 255, 0.16);
+            border-radius: 18px;
+            padding: 14px 16px;
+            text-align: left;
+            font-size: clamp(0.8rem, 2.8vw, 0.9rem);
+            color: #e2e8f0;
+            line-height: 1.45;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .rules-card strong {
+            color: #fde047;
+        }
+
+        .stats-box {
+            background: rgba(30, 41, 59, 0.9);
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            border-radius: 18px;
+            padding: 16px 26px;
+            margin-bottom: 18px;
+            min-width: 230px;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 24px;
+            font-size: clamp(0.92rem, 3.4vw, 1.1rem);
+            margin: 6px 0;
+            font-weight: 700;
+        }
+
+        .stat-val {
+            color: #fbbf24;
+        }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- In-Game Top HUD -->
+    <div id="hud" class="hidden">
+        <div class="hud-badge">SCORE: <span id="scoreDisplay">0</span></div>
+        <div class="hud-badge">LVL: <span id="levelDisplay">1</span></div>
+        <div class="hud-badge nugget-badge">🪙 <span id="nuggetDisplay">0</span></div>
+        <div class="hud-badge">BEST: <span id="bestDisplay">0</span></div>
+        <button class="hud-pause-btn" id="pauseBtn" title="Pause Game">❚❚ PAUSE</button>
+    </div>
+
+    <div id="levelBanner">Level 2!</div>
+
+    <div id="hint-left" class="touch-hint">◀ Hold Left</div>
+    <div id="hint-right" class="touch-hint">Hold Right ▶</div>
+
+    <!-- Main Menu Screen -->
+    <div id="startScreen" class="overlay">
+        <div class="menu-header-bar">
+            <a class="top-back-link" href="https://djaschmitz07-maker.github.io/TDGames/" target="_top" rel="noopener noreferrer">◀ TD Gaming</a>
+            <div class="hud-badge nugget-badge">🪙 <span id="menuNuggetDisplay">0</span></div>
+        </div>
+
+        <h1 class="game-title">Cannon<br>Blast</h1>
+        <div class="title-tagline">Rock Breaker</div>
+        <div class="hud-badge menu-best-badge">BEST SCORE: <span id="menuBestDisplay">0</span></div>
+
+        <!-- Home Menu View -->
+        <div id="menuHomeView" class="menu-panel">
+            <button class="btn" id="startBtn">▶ Play</button>
+            <button class="btn btn-gold" id="openUpgradesBtn">⚙ Upgrades</button>
+            <button class="btn btn-secondary" id="openHowToBtn">? How to Play</button>
+            <button class="btn btn-admin" id="adminToggleMenuBtn">🛠 Admin Test: OFF</button>
+        </div>
+
+        <!-- Upgrades Sub-Menu View -->
+        <div id="menuUpgradesView" class="menu-panel hidden">
+            <div class="upgrade-list">
+                <div class="upgrade-card">
+                    <div class="upgrade-info">
+                        <h3>🔥 Fire Rate <span id="upgFireLvl" style="color:#fbbf24;">Lv.1</span></h3>
+                        <p>Shoot faster at falling rocks</p>
+                    </div>
+                    <button class="upgrade-buy-btn" id="buyFireBtn">🪙 3</button>
+                </div>
+                <div class="upgrade-card">
+                    <div class="upgrade-info">
+                        <h3>💥 Bullet Power <span id="upgPowerLvl" style="color:#fbbf24;">Lv.1</span></h3>
+                        <p>Deal more damage per shot</p>
+                    </div>
+                    <button class="upgrade-buy-btn" id="buyPowerBtn">🪙 5</button>
+                </div>
+                <div class="upgrade-card">
+                    <div class="upgrade-info">
+                        <h3>🛞 Wheel Speed <span id="upgSpeedLvl" style="color:#fbbf24;">Lv.1</span></h3>
+                        <p>Roll quicker left & right</p>
+                    </div>
+                    <button class="upgrade-buy-btn" id="buySpeedBtn">🪙 3</button>
+                </div>
+            </div>
+            <button class="btn btn-dark" id="backFromUpgradesBtn">◀ Back to Menu</button>
+        </div>
+
+        <!-- How To Play Sub-Menu View -->
+        <div id="menuHowToView" class="menu-panel hidden">
+            <div class="rules-card">
+                <div><strong>Move:</strong> Hold the <strong>left</strong> or <strong>right</strong> side of the screen (or use A/D & Arrow keys).</div>
+                <div><strong>Split Rocks:</strong> Big rocks split into medium rocks, and medium rocks split into little gold rocks.</div>
+                <div><strong>Gold Nuggets:</strong> Destroying little gold rocks drops shiny bouncing <strong>gold nuggets</strong>—catch them to buy upgrades!</div>
+                <div><strong>Next Level:</strong> Clear all active rocks before more spawn in to advance to the next level!</div>
+            </div>
+            <button class="btn btn-dark" id="backFromHowToBtn">◀ Back to Menu</button>
+        </div>
+    </div>
+
+    <!-- Pause Overlay -->
+    <div id="pauseScreen" class="overlay hidden">
+        <h1 class="game-title" style="font-size: clamp(1.9rem, 7vw, 2.5rem); margin-bottom: 18px;">Paused</h1>
+        <div class="menu-panel">
+            <button class="btn" id="resumeBtn">▶ Resume</button>
+            <button class="btn btn-admin" id="adminTogglePauseBtn">🛠 Admin Test: OFF</button>
+            <button class="btn btn-secondary" id="pauseRestartBtn">↻ Restart</button>
+            <button class="btn btn-dark" id="pauseMainMenuBtn">⌂ Main Menu</button>
+        </div>
+    </div>
+
+    <!-- Game Over Screen -->
+    <div id="gameOverScreen" class="overlay hidden">
+        <h1 class="game-title" style="background: linear-gradient(135deg, #f87171, #dc2626); -webkit-background-clip: text;">Crushed!</h1>
+        <div class="stats-box">
+            <div class="stat-row">
+                <span>Score</span>
+                <span class="stat-val" id="finalScore">0</span>
+            </div>
+            <div class="stat-row">
+                <span>Nuggets Earned</span>
+                <span class="stat-val" id="finalRunNuggets">+0</span>
+            </div>
+            <div class="stat-row">
+                <span>Total Bank</span>
+                <span class="stat-val" id="finalNuggets">0</span>
+            </div>
+            <div class="stat-row">
+                <span>Level Reached</span>
+                <span class="stat-val" id="finalLevel">1</span>
+            </div>
+            <div class="stat-row">
+                <span>Best</span>
+                <span class="stat-val" id="finalBest">0</span>
+            </div>
+        </div>
+        <div class="menu-panel">
+            <button class="btn" id="restartBtn">↻ Play Again</button>
+            <button class="btn btn-dark" id="gameOverMainMenuBtn">⌂ Main Menu</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    const container = document.getElementById('game-container');
+
+    // HUD & Overlay Elements
+    const hudEl = document.getElementById('hud');
+    const scoreDisplay = document.getElementById('scoreDisplay');
+    const levelDisplay = document.getElementById('levelDisplay');
+    const nuggetDisplay = document.getElementById('nuggetDisplay');
+    const bestDisplay = document.getElementById('bestDisplay');
+    const menuBestDisplay = document.getElementById('menuBestDisplay');
+    const menuNuggetDisplay = document.getElementById('menuNuggetDisplay');
+    const levelBanner = document.getElementById('levelBanner');
+
+    // Screens & Menu Panels
+    const startScreen = document.getElementById('startScreen');
+    const menuHomeView = document.getElementById('menuHomeView');
+    const menuUpgradesView = document.getElementById('menuUpgradesView');
+    const menuHowToView = document.getElementById('menuHowToView');
+    const pauseScreen = document.getElementById('pauseScreen');
+    const gameOverScreen = document.getElementById('gameOverScreen');
+
+    // Final Stats Elements
+    const finalScoreEl = document.getElementById('finalScore');
+    const finalRunNuggetsEl = document.getElementById('finalRunNuggets');
+    const finalNuggetsEl = document.getElementById('finalNuggets');
+    const finalLevelEl = document.getElementById('finalLevel');
+    const finalBestEl = document.getElementById('finalBest');
+
+    // Buttons
+    const startBtn = document.getElementById('startBtn');
+    const openUpgradesBtn = document.getElementById('openUpgradesBtn');
+    const openHowToBtn = document.getElementById('openHowToBtn');
+    const backFromUpgradesBtn = document.getElementById('backFromUpgradesBtn');
+    const backFromHowToBtn = document.getElementById('backFromHowToBtn');
+    const pauseBtn = document.getElementById('pauseBtn');
+    const resumeBtn = document.getElementById('resumeBtn');
+    const pauseRestartBtn = document.getElementById('pauseRestartBtn');
+    const pauseMainMenuBtn = document.getElementById('pauseMainMenuBtn');
+    const restartBtn = document.getElementById('restartBtn');
+    const gameOverMainMenuBtn = document.getElementById('gameOverMainMenuBtn');
+    const adminToggleMenuBtn = document.getElementById('adminToggleMenuBtn');
+    const adminTogglePauseBtn = document.getElementById('adminTogglePauseBtn');
+
+    // Upgrade UI Elements
+    const upgFireLvlEl = document.getElementById('upgFireLvl');
+    const upgPowerLvlEl = document.getElementById('upgPowerLvl');
+    const upgSpeedLvlEl = document.getElementById('upgSpeedLvl');
+    const buyFireBtn = document.getElementById('buyFireBtn');
+    const buyPowerBtn = document.getElementById('buyPowerBtn');
+    const buySpeedBtn = document.getElementById('buySpeedBtn');
+
+    const hintLeft = document.getElementById('hint-left');
+    const hintRight = document.getElementById('hint-right');
+
+    // Fixed Virtual World Dimensions (Zoomed-out 640x1140 arena)
+    const WORLD_WIDTH = 640;
+    const WORLD_HEIGHT = 1140;
+    const groundHeight = 84;
+    const BASE_SPAWN_INTERVAL = 17.6;
+
+    // Persistent Bank, Admin Test Mode & Upgrades State
+    let regularGoldNuggets = 0;
+    let isAdminTest = false;
+    let highScore = 0;
+    const upgrades = {
+        fireRate: 1,
+        power: 1,
+        speed: 1
+    };
+
+    // Active Run State
+    let gameMode = 'menu'; // 'menu' | 'playing' | 'paused' | 'gameover'
+    let score = 0;
+    let runNuggets = 0;
+    let currentLevel = 1;
+    let lastTime = 0;
+    let spawnTimer = 0;
+    let spawnInterval = BASE_SPAWN_INTERVAL;
+    let noHitTimer = 0;
+    let screenShake = 0;
+    let bannerTimeout = null;
+    let menuDemoTimer = 0;
+
+    // Input State
+    let moveDir = 0; // -1 left, 0 stop, 1 right
+    let activePointerId = null;
+    let keys = { left: false, right: false };
+
+    function hideControlHints() {
+        hintLeft.style.opacity = '0';
+        hintRight.style.opacity = '0';
+    }
+
+    // Entities
+    let bullets = [];
+    let rocks = [];
+    let nuggets = [];
+    let particles = [];
+    let shockwaves = [];
+    let clouds = [];
+
+    // Cannon Object
+    const cannon = {
+        x: WORLD_WIDTH / 2,
+        y: WORLD_HEIGHT - groundHeight,
+        vx: 0,
+        smoothInput: 0,
+        tilt: 0,
+        tiltVel: 0,
+        bobOffset: 0,
+        width: 52,
+        height: 42,
+        speed: 495,
+        wheelRadius: 14,
+        wheelAngle: 0,
+        fireRate: 0.44,
+        bulletDamage: 1,
+        fireTimer: 0,
+        recoil: 0
+    };
+
+    const BULLET_IMPULSE = 540;
+
+    // Base Rock Tier Definitions
+    const ROCK_TIERS = {
+        4: {
+            baseHp: 50,
+            mass: 11.5,
+            radius: 44,
+            color: '#0f172a',
+            borderColor: '#020617',
+            highlight: '#94a3b8',
+            bounceVel: -540,
+            maxUpVel: -640,
+            points: 50,
+            spinTorque: 0.42,
+            spinDrag: 0.85,
+            airPush: 8,
+            groundGrip: 9,
+            maxSpin: 3.4,
+            maxVx: 480
+        },
+        3: {
+            baseHp: 10,
+            mass: 10.0,
+            radius: 44,
+            color: '#ef4444',
+            borderColor: '#991b1b',
+            highlight: '#fca5a5',
+            bounceVel: -520,
+            maxUpVel: -640,
+            points: 10,
+            spinTorque: 0.42,
+            spinDrag: 0.85,
+            airPush: 8,
+            groundGrip: 9,
+            maxSpin: 3.4,
+            maxVx: 240
+        },
+        2: {
+            baseHp: 5,
+            mass: 4.5,
+            radius: 30,
+            color: '#f97316',
+            borderColor: '#9a3412',
+            highlight: '#fdba74',
+            bounceVel: -450,
+            maxUpVel: -600,
+            points: 5,
+            spinTorque: 2.6,
+            spinDrag: 0.45,
+            airPush: 34,
+            groundGrip: 24,
+            maxSpin: 10.5,
+            maxVx: 330
+        },
+        1: {
+            baseHp: 2,
+            mass: 2.0,
+            radius: 18,
+            color: '#eab308',
+            borderColor: '#854d0e',
+            highlight: '#fef08a',
+            bounceVel: -380,
+            maxUpVel: -560,
+            points: 2,
+            spinTorque: 7.4,
+            spinDrag: 0.22,
+            airPush: 76,
+            groundGrip: 48,
+            maxSpin: 22.0,
+            maxVx: 430
+        }
+    };
+
+    function applyCannonUpgrades() {
+        cannon.fireRate = Math.max(0.14, 0.44 * Math.pow(0.88, upgrades.fireRate - 1));
+        cannon.bulletDamage = upgrades.power;
+        cannon.speed = Math.min(780, 495 + (upgrades.speed - 1) * 45);
+    }
+
+    function getUpgradeCost(type) {
+        const lvl = upgrades[type];
+        if (type === 'power') return lvl * 5;
+        return lvl * 3;
+    }
+
+    function getFormattedGoldText() {
+        return isAdminTest ? '∞' : `${regularGoldNuggets}`;
+    }
+
+    function toggleAdminTest() {
+        isAdminTest = !isAdminTest;
+        syncMenuAndHudDisplays();
+    }
+
+    function syncMenuAndHudDisplays() {
+        const goldText = getFormattedGoldText();
+        menuBestDisplay.textContent = highScore;
+        menuNuggetDisplay.textContent = goldText;
+        bestDisplay.textContent = highScore;
+        nuggetDisplay.textContent = goldText;
+
+        const adminLabel = isAdminTest ? '🛠 Admin Test: ON (∞)' : '🛠 Admin Test: OFF';
+        adminToggleMenuBtn.textContent = adminLabel;
+        adminTogglePauseBtn.textContent = adminLabel;
+        adminToggleMenuBtn.classList.toggle('active', isAdminTest);
+        adminTogglePauseBtn.classList.toggle('active', isAdminTest);
+
+        upgFireLvlEl.textContent = `Lv.${upgrades.fireRate}`;
+        upgPowerLvlEl.textContent = `Lv.${upgrades.power}`;
+        upgSpeedLvlEl.textContent = `Lv.${upgrades.speed}`;
+
+        const fireCost = getUpgradeCost('fireRate');
+        const powerCost = getUpgradeCost('power');
+        const speedCost = getUpgradeCost('speed');
+
+        buyFireBtn.textContent = upgrades.fireRate >= 8 ? 'MAX' : `🪙 ${fireCost}`;
+        buyPowerBtn.textContent = upgrades.power >= 6 ? 'MAX' : `🪙 ${powerCost}`;
+        buySpeedBtn.textContent = upgrades.speed >= 7 ? 'MAX' : `🪙 ${speedCost}`;
+
+        buyFireBtn.disabled = upgrades.fireRate >= 8 || (!isAdminTest && regularGoldNuggets < fireCost);
+        buyPowerBtn.disabled = upgrades.power >= 6 || (!isAdminTest && regularGoldNuggets < powerCost);
+        buySpeedBtn.disabled = upgrades.speed >= 7 || (!isAdminTest && regularGoldNuggets < speedCost);
+    }
+
+    // Main Menu Navigation Functions
+    function showMenuPanel(panelName) {
+        menuHomeView.classList.add('hidden');
+        menuUpgradesView.classList.add('hidden');
+        menuHowToView.classList.add('hidden');
+
+        if (panelName === 'home') menuHomeView.classList.remove('hidden');
+        else if (panelName === 'upgrades') menuUpgradesView.classList.remove('hidden');
+        else if (panelName === 'howto') menuHowToView.classList.remove('hidden');
+
+        syncMenuAndHudDisplays();
+    }
+
+    function openMainMenu() {
+        gameMode = 'menu';
+        screenShake = 0;
+        moveDir = 0;
+        activePointerId = null;
+        bullets = [];
+        rocks = [];
+        nuggets = [];
+        particles = [];
+        shockwaves = [];
+
+        cannon.x = WORLD_WIDTH / 2;
+        cannon.y = WORLD_HEIGHT - groundHeight;
+        cannon.vx = 0;
+        cannon.smoothInput = 0;
+        cannon.tilt = 0;
+        cannon.tiltVel = 0;
+        cannon.bobOffset = 0;
+        cannon.recoil = 0;
+
+        hudEl.classList.add('hidden');
+        pauseScreen.classList.add('hidden');
+        gameOverScreen.classList.add('hidden');
+        levelBanner.classList.remove('show');
+        hideControlHints();
+
+        // Spawn a couple of lively bouncing rocks behind the Main Menu
+        spawnRock(3, WORLD_WIDTH * 0.28, 220, 75, 40, 10, 0.5);
+        spawnRock(2, WORLD_WIDTH * 0.72, 340, -85, -180, 5, -1.2);
+
+        showMenuPanel('home');
+        startScreen.classList.remove('hidden');
+    }
+
+    // Menu & Admin Test Button Listeners
+    adminToggleMenuBtn.addEventListener('click', toggleAdminTest);
+    adminTogglePauseBtn.addEventListener('click', toggleAdminTest);
+
+    openUpgradesBtn.addEventListener('click', () => showMenuPanel('upgrades'));
+    openHowToBtn.addEventListener('click', () => showMenuPanel('howto'));
+    backFromUpgradesBtn.addEventListener('click', () => showMenuPanel('home'));
+    backFromHowToBtn.addEventListener('click', () => showMenuPanel('home'));
+
+    buyFireBtn.addEventListener('click', () => {
+        const cost = getUpgradeCost('fireRate');
+        if (upgrades.fireRate < 8 && (isAdminTest || regularGoldNuggets >= cost)) {
+            if (!isAdminTest) regularGoldNuggets -= cost;
+            upgrades.fireRate += 1;
+            applyCannonUpgrades();
+            syncMenuAndHudDisplays();
+        }
+    });
+
+    buyPowerBtn.addEventListener('click', () => {
+        const cost = getUpgradeCost('power');
+        if (upgrades.power < 6 && (isAdminTest || regularGoldNuggets >= cost)) {
+            if (!isAdminTest) regularGoldNuggets -= cost;
+            upgrades.power += 1;
+            applyCannonUpgrades();
+            syncMenuAndHudDisplays();
+        }
+    });
+
+    buySpeedBtn.addEventListener('click', () => {
+        const cost = getUpgradeCost('speed');
+        if (upgrades.speed < 7 && (isAdminTest || regularGoldNuggets >= cost)) {
+            if (!isAdminTest) regularGoldNuggets -= cost;
+            upgrades.speed += 1;
+            applyCannonUpgrades();
+            syncMenuAndHudDisplays();
+        }
+    });
+
+    // Pause & Resume Controls
+    function pauseGame() {
+        if (gameMode !== 'playing') return;
+        gameMode = 'paused';
+        screenShake = 0;
+        moveDir = 0;
+        activePointerId = null;
+        syncMenuAndHudDisplays();
+        pauseScreen.classList.remove('hidden');
+    }
+
+    function resumeGame() {
+        if (gameMode !== 'paused') return;
+        pauseScreen.classList.add('hidden');
+        gameMode = 'playing';
+        lastTime = performance.now();
+    }
+
+    pauseBtn.addEventListener('pointerdown', (e) => {
+        e.stopPropagation();
+    });
+    pauseBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        pauseGame();
+    });
+    resumeBtn.addEventListener('click', resumeGame);
+    pauseRestartBtn.addEventListener('click', startGame);
+    pauseMainMenuBtn.addEventListener('click', openMainMenu);
+    gameOverMainMenuBtn.addEventListener('click', openMainMenu);
+
+    // Set internal canvas resolution to exact virtual world size (scaled via CSS)
+    function resize() {
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = WORLD_WIDTH * dpr;
+        canvas.height = WORLD_HEIGHT * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    window.addEventListener('resize', resize);
+
+    // Initialize decorative background clouds
+    function initClouds() {
+        clouds = [];
+        for (let i = 0; i < 6; i++) {
+            clouds.push({
+                x: Math.random() * WORLD_WIDTH,
+                y: 80 + Math.random() * (WORLD_HEIGHT * 0.45),
+                scale: 0.7 + Math.random() * 0.7,
+                speed: 14 + Math.random() * 18
+            });
+        }
+    }
+
+    // Input Handling: Click / Touch Left or Right side of the game arena
+    function updatePointerDirection(clientX) {
+        const rect = container.getBoundingClientRect();
+        const relX = clientX - rect.left;
+        if (relX < rect.width / 2) {
+            moveDir = -1;
+        } else {
+            moveDir = 1;
+        }
+        hideControlHints();
+    }
+
+    container.addEventListener('pointerdown', (e) => {
+        if (gameMode !== 'playing') return;
+        if (e.target.closest('button')) return;
+        activePointerId = e.pointerId;
+        container.setPointerCapture(e.pointerId);
+        updatePointerDirection(e.clientX);
+    });
+
+    container.addEventListener('pointermove', (e) => {
+        if (gameMode !== 'playing' || e.pointerId !== activePointerId) return;
+        updatePointerDirection(e.clientX);
+    });
+
+    function releasePointer(e) {
+        if (e.pointerId === activePointerId) {
+            activePointerId = null;
+            if (!keys.left && !keys.right) {
+                moveDir = 0;
+            }
+        }
+    }
+
+    container.addEventListener('pointerup', releasePointer);
+    container.addEventListener('pointercancel', releasePointer);
+
+    // Keyboard support for desktop convenience
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && (gameMode === 'playing' || gameMode === 'paused')) {
+            if (gameMode === 'playing') pauseGame();
+            else resumeGame();
+            return;
+        }
+        if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
+            keys.left = true;
+            moveDir = -1;
+            if (gameMode === 'playing') hideControlHints();
+        } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
+            keys.right = true;
+            moveDir = 1;
+            if (gameMode === 'playing') hideControlHints();
+        }
+    });
+
+    window.addEventListener('keyup', (e) => {
+        if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
+            keys.left = false;
+            moveDir = keys.right ? 1 : 0;
+        } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
+            keys.right = false;
+            moveDir = keys.left ? -1 : 0;
+        }
+    });
+
+    // Advance to the next level when all active rocks are destroyed before another spawns
+    function advanceToNextLevel() {
+        currentLevel += 1;
+        levelDisplay.textContent = currentLevel;
+
+        spawnInterval = getLevelSpawnInterval(currentLevel);
+        spawnTimer = spawnInterval;
+        noHitTimer = 0;
+
+        levelBanner.textContent = `Level ${currentLevel}!`;
+        levelBanner.classList.add('show');
+        if (bannerTimeout) clearTimeout(bannerTimeout);
+        bannerTimeout = setTimeout(() => {
+            levelBanner.classList.remove('show');
+        }, 1600);
+
+        spawnRock(3);
+    }
+
+    function getLevelSpawnInterval(level) {
+        return Math.max(2.2, BASE_SPAWN_INTERVAL / Math.pow(1.5, level - 1));
+    }
+
+    function getScaledRockHp(tier) {
+        const base = ROCK_TIERS[tier].baseHp;
+        const levelMultiplier = Math.pow(1.5, currentLevel - 1);
+        return Math.max(1, Math.round(base * levelMultiplier));
+    }
+
+    // Start / Reset Game
+    function startGame() {
+        resize();
+        applyCannonUpgrades();
+        screenShake = 0;
+        bullets = [];
+        rocks = [];
+        nuggets = [];
+        particles = [];
+        shockwaves = [];
+        score = 0;
+        runNuggets = 0;
+        currentLevel = 1;
+
+        scoreDisplay.textContent = '0';
+        nuggetDisplay.textContent = getFormattedGoldText();
+        bestDisplay.textContent = highScore;
+        levelDisplay.textContent = '1';
+        levelBanner.classList.remove('show');
+
+        spawnInterval = getLevelSpawnInterval(1);
+        spawnTimer = spawnInterval;
+        noHitTimer = 0;
+        moveDir = 0;
+        activePointerId = null;
+
+        cannon.x = WORLD_WIDTH / 2;
+        cannon.y = WORLD_HEIGHT - groundHeight;
+        cannon.vx = 0;
+        cannon.smoothInput = 0;
+        cannon.tilt = 0;
+        cannon.tiltVel = 0;
+        cannon.bobOffset = 0;
+        cannon.wheelAngle = 0;
+        cannon.fireTimer = 0;
+
+        hintLeft.style.opacity = '1';
+        hintRight.style.opacity = '1';
+
+        startScreen.classList.add('hidden');
+        pauseScreen.classList.add('hidden');
+        gameOverScreen.classList.add('hidden');
+        hudEl.classList.remove('hidden');
+
+        // Spawn first big rock (10)
+        spawnRock(3);
+
+        gameMode = 'playing';
+        lastTime = performance.now();
+    }
+
+    startBtn.addEventListener('click', startGame);
+    restartBtn.addEventListener('click', startGame);
+
+    // Spawn a Rock from top or split from parent rock
+    function spawnRock(tier, customX, customY, customVx, customVy, customHp, customRotSpeed) {
+        const config = ROCK_TIERS[tier];
+        const margin = config.radius + 12;
+
+        const hp = customHp !== undefined ? customHp : getScaledRockHp(tier);
+        let x = customX !== undefined ? customX : margin + Math.random() * (WORLD_WIDTH - margin * 2);
+        let y = customY !== undefined ? customY : -config.radius - 10;
+        let vx = customVx !== undefined ? customVx : (Math.random() < 0.5 ? -1 : 1) * (58 + Math.random() * 52);
+        let vy = customVy !== undefined ? customVy : 30;
+        const defaultSpinScale = (tier === 3 || tier === 4) ? 0.6 : tier === 2 ? 1.6 : 2.8;
+        let rotSpeed = customRotSpeed !== undefined ? customRotSpeed : (Math.random() - 0.5) * defaultSpinScale;
+
+        const vertices = [];
+        const pointsCount = 11;
+        for (let i = 0; i < pointsCount; i++) {
+            const angle = (i / pointsCount) * Math.PI * 2;
+            const variance = 0.88 + Math.sin(i * 3.7) * 0.12;
+            vertices.push({
+                angle: angle,
+                dist: config.radius * variance
+            });
+        }
+
+        rocks.push({
+            tier: tier,
+            hp: hp,
+            maxHp: hp,
+            mass: config.mass,
+            radius: config.radius,
+            x: x,
+            y: y,
+            vx: vx,
+            vy: vy,
+            rotation: Math.random() * Math.PI * 2,
+            rotSpeed: rotSpeed,
+            hitFlash: 0,
+            squashY: 1.0,
+            hitGlow: 0,
+            vertices: vertices
+        });
+    }
+
+    // Spawn a shiny, numberless bouncing gold nugget when a little gold rock (tier 1) is destroyed
+    function spawnGoldNugget(x, y, parentVx, parentRotSpeed) {
+        const vertices = [];
+        const pointsCount = 8;
+        for (let i = 0; i < pointsCount; i++) {
+            const angle = (i / pointsCount) * Math.PI * 2;
+            const variance = i % 2 === 0 ? 1.05 : 0.82;
+            vertices.push({
+                angle: angle,
+                dist: 11 * variance
+            });
+        }
+
+        const dir = Math.abs(parentVx) > 20 ? Math.sign(parentVx) : (Math.random() < 0.5 ? -1 : 1);
+        nuggets.push({
+            x: x,
+            y: y,
+            vx: Math.max(-280, Math.min(280, parentVx * 0.65 + dir * 95)),
+            vy: -260,
+            radius: 11,
+            rotation: Math.random() * Math.PI * 2,
+            rotSpeed: parentRotSpeed !== undefined && Math.abs(parentRotSpeed) > 0.5 ? parentRotSpeed : dir * 4.5,
+            shimmer: Math.random() * Math.PI * 2,
+            sparkleTimer: 0,
+            vertices: vertices
+        });
+    }
+
+    // Spawn a dark black 50-HP (scaled by level) meteor rock diving directly toward the cannon
+    function spawnBlackMeteor() {
+        const config = ROCK_TIERS[4];
+        const margin = config.radius + 16;
+        const startX = cannon.x < WORLD_WIDTH / 2
+            ? WORLD_WIDTH - margin - Math.random() * 140
+            : margin + Math.random() * 140;
+        const startY = -config.radius - 12;
+
+        const targetX = cannon.x;
+        const targetY = cannon.y - 21;
+        const flightTime = 1.65;
+        const gravity = 380;
+
+        const vx = Math.max(-config.maxVx, Math.min(config.maxVx, (targetX - startX) / flightTime));
+        const vy = (targetY - startY - 0.5 * gravity * flightTime * flightTime) / flightTime;
+
+        spawnRock(4, startX, startY, vx, Math.max(260, vy), getScaledRockHp(4));
+    }
+
+    function createParticles(x, y, color, count) {
+        for (let i = 0; i < count; i++) {
+            const angle = Math.random() * Math.PI * 2;
+            const speed = 60 + Math.random() * 180;
+            particles.push({
+                x: x,
+                y: y,
+                vx: Math.cos(angle) * speed,
+                vy: Math.sin(angle) * speed - 60,
+                size: 3 + Math.random() * 5,
+                color: color,
+                alpha: 1,
+                life: 0.35 + Math.random() * 0.3
+            });
+        }
+    }
+
+    function createImpactRipple(x, y, radius, color) {
+        shockwaves.push({
+            x: x,
+            y: y,
+            radius: radius * 0.45,
+            maxRadius: radius * 1.15,
+            color: color,
+            alpha: 0.75,
+            life: 0.28
+        });
+    }
+
+    // Subtle live background animation behind the Main Menu
+    function updateMenuBackground(dt) {
+        for (const c of clouds) {
+            c.x += c.speed * dt;
+            if (c.x > WORLD_WIDTH + 100) c.x = -100;
+        }
+
+        menuDemoTimer += dt;
+        const prevX = cannon.x;
+        const prevVx = cannon.vx;
+        const targetX = WORLD_WIDTH * 0.5 + Math.sin(menuDemoTimer * 0.9) * 140;
+        cannon.vx = (targetX - cannon.x) * 2.5;
+        cannon.x += cannon.vx * dt;
+
+        const accelX = (cannon.vx - prevVx) / Math.max(dt, 0.001);
+        const targetTilt = Math.max(-0.08, Math.min(0.08, (cannon.vx / cannon.speed) * 0.05 + (accelX / 3600) * 0.03));
+        cannon.tilt += (targetTilt - cannon.tilt) * (1 - Math.exp(-10 * dt));
+        cannon.wheelAngle += (cannon.x - prevX) / cannon.wheelRadius;
+
+        const gravity = 380;
+        const floorY = WORLD_HEIGHT - groundHeight;
+        for (const r of rocks) {
+            const config = ROCK_TIERS[r.tier];
+            r.vy += gravity * dt;
+            r.x += r.vx * dt;
+            r.y += r.vy * dt;
+            r.rotation += r.rotSpeed * dt;
+
+            if (r.x - r.radius < 0) {
+                r.x = r.radius;
+                r.vx = Math.abs(r.vx);
+            } else if (r.x + r.radius > WORLD_WIDTH) {
+                r.x = WORLD_WIDTH - r.radius;
+                r.vx = -Math.abs(r.vx);
+            }
+            if (r.y + r.radius >= floorY) {
+                r.y = floorY - r.radius;
+                r.vy = config.bounceVel;
+            }
+        }
+    }
+
+    // Main Update Loop (runs strictly in 640x1140 virtual world coordinates)
+    function update(dt) {
+        if (screenShake > 0) {
+            screenShake = Math.max(0, screenShake - dt * 28);
+        }
+
+        for (const c of clouds) {
+            c.x += c.speed * dt;
+            if (c.x > WORLD_WIDTH + 100) c.x = -100;
+        }
+
+        // Two-stage eased input & velocity smoothing
+        const prevX = cannon.x;
+        const prevVx = cannon.vx;
+        const inputLerp = 1 - Math.exp(-16 * dt);
+        cannon.smoothInput += (moveDir - cannon.smoothInput) * inputLerp;
+        if (Math.abs(cannon.smoothInput) < 0.005 && moveDir === 0) {
+            cannon.smoothInput = 0;
+        }
+
+        const targetVx = cannon.smoothInput * cannon.speed;
+        const velRate = moveDir !== 0 ? 11.5 : 10.5;
+        cannon.vx += (targetVx - cannon.vx) * (1 - Math.exp(-velRate * dt));
+        if (Math.abs(cannon.vx) < 0.8 && moveDir === 0) {
+            cannon.vx = 0;
+        }
+
+        cannon.x += cannon.vx * dt;
+        const halfW = cannon.width * 0.65;
+        if (cannon.x < halfW) {
+            cannon.x = halfW;
+            cannon.vx *= 0.35;
+        } else if (cannon.x > WORLD_WIDTH - halfW) {
+            cannon.x = WORLD_WIDTH - halfW;
+            cannon.vx *= 0.35;
+        }
+
+        const accelX = (cannon.vx - prevVx) / Math.max(dt, 0.001);
+        const targetTilt = Math.max(-0.11, Math.min(0.11, (cannon.vx / cannon.speed) * 0.065 + (accelX / 3600) * 0.04));
+        const springStiffness = 140;
+        const springDamping = 17;
+        cannon.tiltVel += ((targetTilt - cannon.tilt) * springStiffness - cannon.tiltVel * springDamping) * dt;
+        cannon.tilt += cannon.tiltVel * dt;
+
+        const speedRatio = Math.min(1, Math.abs(cannon.vx) / cannon.speed);
+        const targetBob = speedRatio * 1.6;
+        cannon.bobOffset += (targetBob - cannon.bobOffset) * (1 - Math.exp(-12 * dt));
+
+        const dx = cannon.x - prevX;
+        cannon.wheelAngle += dx / cannon.wheelRadius;
+
+        if (cannon.recoil > 0) {
+            cannon.recoil = Math.max(0, cannon.recoil - dt * 35);
+        }
+
+        // Constantly shoot upwards
+        cannon.fireTimer -= dt;
+        if (cannon.fireTimer <= 0) {
+            cannon.fireTimer = cannon.fireRate;
+            cannon.recoil = 5;
+            bullets.push({
+                x: cannon.x,
+                y: cannon.y - cannon.height - 6,
+                radius: 5.5 + (cannon.bulletDamage - 1) * 0.8,
+                damage: cannon.bulletDamage,
+                vy: -880
+            });
+        }
+
+        // Update Bullets
+        for (let i = bullets.length - 1; i >= 0; i--) {
+            const b = bullets[i];
+            b.y += b.vy * dt;
+            if (b.y < -20) {
+                bullets.splice(i, 1);
+            }
+        }
+
+        // Check 6-second no-hit timer
+        noHitTimer += dt;
+        if (noHitTimer >= 6.0) {
+            noHitTimer = 0;
+            spawnBlackMeteor();
+        }
+
+        // Spawn Rocks periodically
+        spawnTimer -= dt;
+        if (spawnTimer <= 0) {
+            const totalMass = rocks.reduce((acc, r) => acc + Math.min(r.tier, 3), 0);
+            if (totalMass < 12) {
+                const tierToSpawn = Math.random() < 0.72 ? 3 : 2;
+                spawnRock(tierToSpawn);
+            }
+            spawnInterval = getLevelSpawnInterval(currentLevel);
+            spawnTimer = spawnInterval;
+        }
+
+        // Update Rocks
+        const gravity = 380;
+        const floorY = WORLD_HEIGHT - groundHeight;
+        let shouldAdvanceLevel = false;
+
+        for (let i = rocks.length - 1; i >= 0; i--) {
+            const r = rocks[i];
+            const config = ROCK_TIERS[r.tier];
+
+            r.squashY += (1.0 - r.squashY) * (1 - Math.exp(-16 * dt));
+            r.hitGlow = Math.max(0, r.hitGlow - dt * 3.5);
+            r.rotSpeed *= Math.exp(-config.spinDrag * dt);
+
+            r.vy += gravity * dt;
+            r.x += r.vx * dt;
+            r.y += r.vy * dt;
+            r.rotation += r.rotSpeed * dt;
+
+            if (r.y - r.radius < 68 && r.vy < 0) {
+                r.y = 68 + r.radius;
+                r.vy *= -0.35;
+            }
+
+            if (r.hitFlash > 0) {
+                r.hitFlash = Math.max(0, r.hitFlash - dt * 8);
+            }
+
+            if (r.x - r.radius < 0) {
+                r.x = r.radius;
+                r.vx = Math.abs(r.vx);
+                r.rotSpeed *= 0.8;
+            } else if (r.x + r.radius > WORLD_WIDTH) {
+                r.x = WORLD_WIDTH - r.radius;
+                r.vx = -Math.abs(r.vx);
+                r.rotSpeed *= 0.8;
+            }
+
+            if (r.y + r.radius >= floorY) {
+                r.y = floorY - r.radius;
+                r.vy = config.bounceVel;
+                r.squashY = 0.84;
+
+                const spinKick = r.rotSpeed * config.groundGrip;
+                r.vx = Math.max(-config.maxVx, Math.min(config.maxVx, r.vx + spinKick));
+                r.rotSpeed *= 0.78;
+            }
+
+            // Check Bullet Collisions
+            let rockDestroyed = false;
+            for (let j = bullets.length - 1; j >= 0; j--) {
+                const b = bullets[j];
+                const distX = b.x - r.x;
+                const distY = b.y - r.y;
+                const distSq = distX * distX + distY * distY;
+                const hitDist = r.radius + b.radius;
+
+                if (distSq <= hitDist * hitDist) {
+                    bullets.splice(j, 1);
+                    noHitTimer = 0;
+                    const dmgDealt = Math.min(r.hp, b.damage);
+                    r.hp -= dmgDealt;
+                    r.hitFlash = 1;
+                    r.hitGlow = Math.min(1.0, r.hitGlow + 0.55);
+
+                    const upwardKnockback = BULLET_IMPULSE / r.mass;
+                    r.vy = Math.max(config.maxUpVel, r.vy - upwardKnockback);
+
+                    const offsetNorm = Math.max(-1, Math.min(1, distX / r.radius));
+                    r.rotSpeed = Math.max(
+                        -config.maxSpin,
+                        Math.min(config.maxSpin, r.rotSpeed - offsetNorm * config.spinTorque)
+                    );
+                    r.vx = Math.max(
+                        -config.maxVx,
+                        Math.min(config.maxVx, r.vx - offsetNorm * config.airPush)
+                    );
+
+                    r.squashY = r.tier === 1 ? 0.80 : r.tier === 2 ? 0.87 : 0.93;
+
+                    score += dmgDealt;
+                    scoreDisplay.textContent = score;
+
+                    createParticles(b.x, b.y, config.highlight, 4);
+                    createImpactRipple(b.x, r.y + r.radius * 0.65, r.radius, config.highlight);
+
+                    if (r.hp <= 0) {
+                        rockDestroyed = true;
+                        screenShake = Math.min(r.tier, 3) * 2.5;
+                        createParticles(r.x, r.y, config.color, r.tier === 4 ? 22 : 14);
+
+                        if (r.tier === 4) {
+                            const smallConfig = ROCK_TIERS[1];
+                            const smallHp = getScaledRockHp(1);
+                            const inheritedRotSpeed = r.rotSpeed;
+                            const inheritedVx = r.vx * 0.5;
+                            const fanSpeedsX = [-190, -95, 0, 95, 190];
+                            const fanVelsY = [-250, -310, -345, -310, -250];
+
+                            for (let k = 0; k < 5; k++) {
+                                const pieceVx = Math.max(
+                                    -smallConfig.maxVx,
+                                    Math.min(smallConfig.maxVx, inheritedVx + fanSpeedsX[k])
+                                );
+                                const offsetX = (k - 2) * 12;
+                                spawnRock(1, r.x + offsetX, r.y, pieceVx, fanVelsY[k], smallHp, inheritedRotSpeed);
+                            }
+                        } else if (r.tier > 1) {
+                            const nextTier = r.tier - 1;
+                            const nextConfig = ROCK_TIERS[nextTier];
+                            const childHp = Math.max(1, Math.round(r.maxHp / 2));
+                            const splitSpeedX = 92 + Math.random() * 40;
+                            const popUpVel = -260;
+
+                            const inheritedRotSpeed = r.rotSpeed;
+                            const inheritedVx = r.vx * 0.7;
+                            const leftVx = Math.max(-nextConfig.maxVx, Math.min(nextConfig.maxVx, inheritedVx - splitSpeedX));
+                            const rightVx = Math.max(-nextConfig.maxVx, Math.min(nextConfig.maxVx, inheritedVx + splitSpeedX));
+
+                            spawnRock(nextTier, r.x - 14, r.y, leftVx, popUpVel, childHp, inheritedRotSpeed);
+                            spawnRock(nextTier, r.x + 14, r.y, rightVx, popUpVel, childHp, inheritedRotSpeed);
+                        } else if (r.tier === 1) {
+                            spawnGoldNugget(r.x, r.y, r.vx, r.rotSpeed);
+                        }
+                        rocks.splice(i, 1);
+
+                        if (rocks.length === 0) {
+                            shouldAdvanceLevel = true;
+                        }
+                        break;
+                    }
+                }
+            }
+
+            if (rockDestroyed) continue;
+
+            // Check Collision with Cannon (Game Over)
+            const cannonCenterX = cannon.x;
+            const cannonCenterY = cannon.y - 21;
+            const cannonHitRadius = 21;
+
+            const cdx = r.x - cannonCenterX;
+            const cdy = r.y - cannonCenterY;
+            const minSafeDist = r.radius + cannonHitRadius;
+
+            if (cdx * cdx + cdy * cdy < minSafeDist * minSafeDist) {
+                triggerGameOver();
+                return;
+            }
+        }
+
+        // Update Bouncing Gold Nuggets & Check Cannon Collection
+        for (let i = nuggets.length - 1; i >= 0; i--) {
+            const n = nuggets[i];
+            n.vy += gravity * 0.85 * dt;
+            n.x += n.vx * dt;
+            n.y += n.vy * dt;
+            n.rotation += n.rotSpeed * dt;
+            n.shimmer += dt * 7.5;
+
+            n.sparkleTimer -= dt;
+            if (n.sparkleTimer <= 0) {
+                n.sparkleTimer = 0.14;
+                particles.push({
+                    x: n.x + (Math.random() - 0.5) * 14,
+                    y: n.y + (Math.random() - 0.5) * 14,
+                    vx: (Math.random() - 0.5) * 30,
+                    vy: -25 - Math.random() * 30,
+                    size: 2.5 + Math.random() * 2,
+                    color: '#fef08a',
+                    alpha: 1,
+                    life: 0.35
+                });
+            }
+
+            if (n.x - n.radius < 0) {
+                n.x = n.radius;
+                n.vx = Math.abs(n.vx) * 0.92;
+                n.rotSpeed *= -0.85;
+            } else if (n.x + n.radius > WORLD_WIDTH) {
+                n.x = WORLD_WIDTH - n.radius;
+                n.vx = -Math.abs(n.vx) * 0.92;
+                n.rotSpeed *= -0.85;
+            }
+
+            if (n.y + n.radius >= floorY) {
+                n.y = floorY - n.radius;
+                n.vy = -310;
+                n.vx *= 0.94;
+                if (Math.abs(n.vx) < 45) {
+                    n.vx = (n.vx >= 0 ? 1 : -1) * 55;
+                }
+            }
+
+            const cannonCenterX = cannon.x;
+            const cannonCenterY = cannon.y - 22;
+            const pickupRadius = 34;
+            const ndx = n.x - cannonCenterX;
+            const ndy = n.y - cannonCenterY;
+            const collectDist = n.radius + pickupRadius;
+
+            if (ndx * ndx + ndy * ndy <= collectDist * collectDist) {
+                if (!isAdminTest) {
+                    runNuggets += 1;
+                    regularGoldNuggets += 1;
+                }
+                nuggetDisplay.textContent = getFormattedGoldText();
+                createParticles(n.x, n.y, '#fde047', 16);
+                createImpactRipple(n.x, n.y, 24, '#fef08a');
+                nuggets.splice(i, 1);
+            }
+        }
+
+        if (shouldAdvanceLevel) {
+            advanceToNextLevel();
+            return;
+        }
+
+        for (let i = shockwaves.length - 1; i >= 0; i--) {
+            const s = shockwaves[i];
+            s.life -= dt;
+            s.y -= 35 * dt;
+            s.radius += (s.maxRadius - s.radius) * (1 - Math.exp(-12 * dt));
+            s.alpha = Math.max(0, (s.life / 0.28) * 0.75);
+            if (s.life <= 0) {
+                shockwaves.splice(i, 1);
+            }
+        }
+
+        for (let i = particles.length - 1; i >= 0; i--) {
+            const p = particles[i];
+            p.vy += 350 * dt;
+            p.x += p.vx * dt;
+            p.y += p.vy * dt;
+            p.life -= dt;
+            p.alpha = Math.max(0, p.life * 2);
+            if (p.life <= 0) {
+                particles.splice(i, 1);
+            }
+        }
+    }
+
+    function triggerGameOver() {
+        gameMode = 'gameover';
+        screenShake = 0;
+        moveDir = 0;
+        activePointerId = null;
+        hideControlHints();
+        createParticles(cannon.x, cannon.y - 20, '#fbbf24', 25);
+
+        if (score > highScore) {
+            highScore = score;
+            bestDisplay.textContent = highScore;
+        }
+
+        hudEl.classList.add('hidden');
+        finalScoreEl.textContent = score;
+        finalRunNuggetsEl.textContent = isAdminTest ? '∞ (Admin)' : `+${runNuggets}`;
+        finalNuggetsEl.textContent = getFormattedGoldText();
+        finalLevelEl.textContent = currentLevel;
+        finalBestEl.textContent = highScore;
+        gameOverScreen.classList.remove('hidden');
+    }
+
+    // Draw Everything in Virtual World Coordinates
+    function draw() {
+        ctx.save();
+
+        if (gameMode === 'playing' && screenShake > 0) {
+            const sx = (Math.random() - 0.5) * screenShake;
+            const sy = (Math.random() - 0.5) * screenShake;
+            ctx.translate(sx, sy);
+        }
+
+        ctx.clearRect(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
+
+        // Draw Background Clouds
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.22)';
+        for (const c of clouds) {
+            ctx.beginPath();
+            ctx.arc(c.x, c.y, 26 * c.scale, 0, Math.PI * 2);
+            ctx.arc(c.x + 22 * c.scale, c.y - 9 * c.scale, 30 * c.scale, 0, Math.PI * 2);
+            ctx.arc(c.x + 46 * c.scale, c.y, 24 * c.scale, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        // Draw Ground
+        const floorY = WORLD_HEIGHT - groundHeight;
+        ctx.fillStyle = '#22c55e';
+        ctx.fillRect(0, floorY, WORLD_WIDTH, 16);
+        ctx.fillStyle = '#15803d';
+        ctx.fillRect(0, floorY + 16, WORLD_WIDTH, 6);
+        ctx.fillStyle = '#78350f';
+        ctx.fillRect(0, floorY + 22, WORLD_WIDTH, groundHeight - 22);
+
+        // Draw Bullets
+        for (const b of bullets) {
+            ctx.save();
+            const grad = ctx.createLinearGradient(b.x, b.y, b.x, b.y + 26);
+            grad.addColorStop(0, '#fef08a');
+            grad.addColorStop(1, 'rgba(250, 204, 21, 0)');
+            ctx.fillStyle = grad;
+            ctx.fillRect(b.x - 3, b.y, 6, 26);
+
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        }
+
+        // Draw Cannon with Wheels
+        drawCannon();
+
+        // Draw Upward Impact Ripples under shot rocks
+        for (const s of shockwaves) {
+            ctx.save();
+            ctx.globalAlpha = s.alpha;
+            ctx.strokeStyle = s.color;
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.ellipse(s.x, s.y, s.radius, s.radius * 0.34, 0, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        // Draw Shiny Bouncing Gold Nuggets
+        for (const n of nuggets) {
+            drawGoldNugget(n);
+        }
+
+        // Draw Rocks with Numbers
+        for (const r of rocks) {
+            drawRock(r);
+        }
+
+        // Draw Particles
+        for (const p of particles) {
+            ctx.save();
+            ctx.globalAlpha = p.alpha;
+            ctx.fillStyle = p.color;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        }
+
+        ctx.restore();
+    }
+
+    function drawGoldNugget(n) {
+        const pulse = 0.8 + Math.sin(n.shimmer) * 0.2;
+
+        ctx.save();
+        ctx.translate(n.x, n.y);
+
+        const glow = ctx.createRadialGradient(0, 0, 2, 0, 0, n.radius * 2.1);
+        glow.addColorStop(0, `rgba(254, 240, 138, ${0.75 * pulse})`);
+        glow.addColorStop(0.55, `rgba(250, 204, 21, ${0.32 * pulse})`);
+        glow.addColorStop(1, 'rgba(250, 204, 21, 0)');
+        ctx.fillStyle = glow;
+        ctx.beginPath();
+        ctx.arc(0, 0, n.radius * 2.1, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.save();
+        ctx.rotate(n.rotation);
+        ctx.beginPath();
+        n.vertices.forEach((v, idx) => {
+            const vx = Math.cos(v.angle) * v.dist;
+            const vy = Math.sin(v.angle) * v.dist;
+            if (idx === 0) ctx.moveTo(vx, vy);
+            else ctx.lineTo(vx, vy);
+        });
+        ctx.closePath();
+
+        const goldGrad = ctx.createLinearGradient(-n.radius, -n.radius, n.radius, n.radius);
+        goldGrad.addColorStop(0, '#fef9c3');
+        goldGrad.addColorStop(0.45, '#facc15');
+        goldGrad.addColorStop(1, '#ca8a04');
+        ctx.fillStyle = goldGrad;
+        ctx.fill();
+
+        ctx.lineWidth = 2.5;
+        ctx.strokeStyle = '#854d0e';
+        ctx.stroke();
+
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+        ctx.beginPath();
+        ctx.ellipse(-2.5, -2.5, 4, 2.2, -0.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+
+        const glintScale = 0.65 + Math.max(0, Math.sin(n.shimmer * 1.3)) * 0.65;
+        ctx.save();
+        ctx.translate(-n.radius * 0.45, -n.radius * 0.45);
+        ctx.scale(glintScale, glintScale);
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.moveTo(0, -5.5);
+        ctx.lineTo(1.5, -1.5);
+        ctx.lineTo(5.5, 0);
+        ctx.lineTo(1.5, 1.5);
+        ctx.lineTo(0, 5.5);
+        ctx.lineTo(-1.5, 1.5);
+        ctx.lineTo(-5.5, 0);
+        ctx.lineTo(-1.5, -1.5);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+
+        ctx.restore();
+    }
+
+    function drawCannon() {
+        const cx = cannon.x;
+        const groundY = cannon.y;
+        const wheelY = groundY - cannon.wheelRadius;
+        const wheelOffset = 21;
+
+        ctx.save();
+
+        ctx.save();
+        ctx.translate(cx, wheelY + cannon.bobOffset);
+        ctx.rotate(cannon.tilt);
+
+        const barrelW = 22;
+        const barrelH = 35;
+        const barrelTopY = -barrelH + cannon.recoil;
+
+        ctx.fillStyle = '#334155';
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.roundRect(-barrelW / 2, barrelTopY, barrelW, barrelH, 4);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = '#475569';
+        ctx.beginPath();
+        ctx.roundRect(-barrelW / 2 - 3, barrelTopY - 3, barrelW + 6, 9, 3);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = '#2563eb';
+        ctx.beginPath();
+        ctx.arc(0, -4, 19, Math.PI, 0);
+        ctx.lineTo(25, 4);
+        ctx.lineTo(-25, 4);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+        ctx.restore();
+
+        drawWheel(cx - wheelOffset, wheelY, cannon.wheelRadius, cannon.wheelAngle);
+        drawWheel(cx + wheelOffset, wheelY, cannon.wheelRadius, cannon.wheelAngle);
+
+        ctx.restore();
+    }
+
+    function drawWheel(wx, wy, radius, angle) {
+        ctx.save();
+        ctx.translate(wx, wy);
+        ctx.rotate(angle);
+
+        ctx.fillStyle = '#1e293b';
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(0, 0, radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = '#d97706';
+        ctx.beginPath();
+        ctx.arc(0, 0, radius * 0.65, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.strokeStyle = '#78350f';
+        ctx.lineWidth = 2.5;
+        for (let i = 0; i < 4; i++) {
+            const a = (i * Math.PI) / 2;
+            ctx.beginPath();
+            ctx.moveTo(Math.cos(a) * -radius * 0.65, Math.sin(a) * -radius * 0.65);
+            ctx.lineTo(Math.cos(a) * radius * 0.65, Math.sin(a) * radius * 0.65);
+            ctx.stroke();
+        }
+
+        ctx.fillStyle = '#f8fafc';
+        ctx.beginPath();
+        ctx.arc(0, 0, 4, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.restore();
+    }
+
+    function drawRock(r) {
+        const config = ROCK_TIERS[r.tier];
+        const scaleY = r.squashY;
+        const scaleX = 1 / Math.sqrt(scaleY);
+
+        ctx.save();
+        ctx.translate(r.x, r.y);
+
+        if (r.hitGlow > 0.02) {
+            ctx.save();
+            ctx.globalAlpha = r.hitGlow * 0.45;
+            const cushionGrad = ctx.createRadialGradient(
+                0, r.radius * 0.75, 2,
+                0, r.radius * 0.75, r.radius * 1.15
+            );
+            cushionGrad.addColorStop(0, '#fef08a');
+            cushionGrad.addColorStop(0.55, config.highlight);
+            cushionGrad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+            ctx.fillStyle = cushionGrad;
+            ctx.beginPath();
+            ctx.ellipse(0, r.radius * 0.78, r.radius * 1.1, r.radius * 0.42, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        }
+
+        ctx.save();
+        ctx.scale(scaleX, scaleY);
+        ctx.rotate(r.rotation);
+
+        ctx.beginPath();
+        r.vertices.forEach((v, idx) => {
+            const vx = Math.cos(v.angle) * v.dist;
+            const vy = Math.sin(v.angle) * v.dist;
+            if (idx === 0) ctx.moveTo(vx, vy);
+            else ctx.lineTo(vx, vy);
+        });
+        ctx.closePath();
+
+        ctx.fillStyle = r.hitFlash > 0 ? '#ffffff' : config.color;
+        ctx.fill();
+
+        ctx.lineWidth = 3.5;
+        ctx.strokeStyle = config.borderColor;
+        ctx.stroke();
+
+        ctx.fillStyle = r.hitFlash > 0
+            ? 'rgba(15, 23, 42, 0.15)'
+            : (r.tier === 4 ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.18)');
+        ctx.beginPath();
+        ctx.arc(-r.radius * 0.36, -r.radius * 0.22, r.radius * 0.17, 0, Math.PI * 2);
+        ctx.arc(r.radius * 0.38, r.radius * 0.26, r.radius * 0.14, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+
+        ctx.fillStyle = r.hitFlash > 0 ? '#0f172a' : '#ffffff';
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.65)';
+        ctx.lineWidth = 4;
+        ctx.font = `900 ${Math.max(16, Math.floor(r.radius * 0.72))}px 'Segoe UI', sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.strokeText(r.hp, 0, 1);
+        ctx.fillText(r.hp, 0, 1);
+
+        ctx.restore();
+    }
+
+    // Continuous Animation Loop (handles Menu backdrop, Active Gameplay, and Paused state)
+    function gameLoop(timestamp) {
+        const dt = Math.min((timestamp - lastTime) / 1000, 0.05);
+        lastTime = timestamp;
+
+        if (gameMode === 'playing') {
+            update(dt);
+        } else if (gameMode === 'menu') {
+            updateMenuBackground(dt);
+        }
+
+        draw();
+        requestAnimationFrame(gameLoop);
+    }
+
+    // Initialize and launch Main Menu
+    resize();
+    initClouds();
+    openMainMenu();
+    lastTime = performance.now();
+    requestAnimationFrame(gameLoop);
+</script>
+</body>
+</html>
