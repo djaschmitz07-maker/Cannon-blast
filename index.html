@@ -102,14 +102,23 @@
             color: #fde047;
         }
 
-        .hud-pause-btn {
+        .hud-controls {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            pointer-events: auto;
+            z-index: 12;
+            flex-shrink: 0;
+        }
+
+        .hud-icon-btn {
             pointer-events: auto;
             background: rgba(15, 23, 42, 0.85);
             backdrop-filter: blur(4px);
             color: #ffffff;
             border: 2px solid rgba(255, 255, 255, 0.45);
             border-radius: 14px;
-            padding: clamp(5px, 1.4%, 8px) clamp(10px, 2.6%, 14px);
+            padding: clamp(5px, 1.4%, 8px) clamp(8px, 2.2%, 12px);
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -120,10 +129,9 @@
             cursor: pointer;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
             flex-shrink: 0;
-            z-index: 12;
         }
 
-        .hud-pause-btn:active {
+        .hud-icon-btn:active {
             transform: scale(0.92);
         }
 
@@ -180,14 +188,14 @@
         .overlay {
             position: absolute;
             inset: 0;
-            background: rgba(15, 23, 42, 0.78);
+            background: rgba(15, 23, 42, 0.82);
             backdrop-filter: blur(6px);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
-            padding: 20px;
+            padding: 18px;
             z-index: 20;
             color: white;
             transition: opacity 0.25s ease;
@@ -208,6 +216,12 @@
             justify-content: space-between;
             align-items: center;
             gap: 8px;
+        }
+
+        .menu-header-right {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
 
         .top-back-link {
@@ -233,11 +247,31 @@
             transform: scale(0.95);
         }
 
+        .sound-toggle-pill {
+            background: rgba(15, 23, 42, 0.78);
+            backdrop-filter: blur(4px);
+            color: #f8fafc;
+            padding: clamp(5px, 1.3%, 8px) clamp(9px, 2.2%, 12px);
+            border-radius: 20px;
+            font-weight: 800;
+            font-size: clamp(0.66rem, 2.2vw, 0.85rem);
+            border: 2px solid rgba(255, 255, 255, 0.28);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.28);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sound-toggle-pill:active {
+            transform: scale(0.94);
+        }
+
         .game-title {
-            font-size: clamp(2.1rem, 8.5vw, 3rem);
+            font-size: clamp(2rem, 8vw, 2.85rem);
             font-weight: 900;
             line-height: 1.02;
-            margin-bottom: 6px;
+            margin-bottom: 5px;
             background: linear-gradient(135deg, #fde047 0%, #f97316 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -246,16 +280,16 @@
         }
 
         .title-tagline {
-            font-size: clamp(0.75rem, 2.6vw, 0.88rem);
+            font-size: clamp(0.72rem, 2.5vw, 0.86rem);
             font-weight: 800;
             letter-spacing: 2px;
             text-transform: uppercase;
             color: #93c5fd;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .menu-best-badge {
-            margin-bottom: 16px;
+            margin-bottom: 14px;
         }
 
         /* Main Menu Navigation Tabs / Views */
@@ -265,7 +299,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
 
         .menu-panel.hidden {
@@ -276,17 +310,17 @@
             background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%);
             color: white;
             border: none;
-            padding: 14px 36px;
-            font-size: clamp(1.05rem, 3.8vw, 1.25rem);
+            padding: 13px 32px;
+            font-size: clamp(1rem, 3.6vw, 1.2rem);
             font-weight: 800;
             border-radius: 50px;
             cursor: pointer;
-            box-shadow: 0 6px 0 #14532d, 0 12px 24px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 5px 0 #14532d, 0 10px 20px rgba(0, 0, 0, 0.4);
             transition: transform 0.1s ease, box-shadow 0.1s ease;
             text-transform: uppercase;
             letter-spacing: 1px;
             width: 100%;
-            max-width: 260px;
+            max-width: 255px;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
@@ -294,15 +328,15 @@
         }
 
         .btn:active {
-            transform: translateY(4px);
-            box-shadow: 0 2px 0 #14532d, 0 6px 12px rgba(0, 0, 0, 0.4);
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 #14532d, 0 5px 10px rgba(0, 0, 0, 0.4);
         }
 
         .btn-secondary {
             background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%);
             box-shadow: 0 5px 0 #1e3a8a, 0 10px 20px rgba(0, 0, 0, 0.35);
-            padding: 11px 26px;
-            font-size: clamp(0.9rem, 3.2vw, 1.05rem);
+            padding: 10px 26px;
+            font-size: clamp(0.88rem, 3.1vw, 1.02rem);
         }
 
         .btn-secondary:active {
@@ -314,8 +348,8 @@
             background: linear-gradient(180deg, #facc15 0%, #eab308 100%);
             color: #1e1b0f;
             box-shadow: 0 5px 0 #854d0e, 0 10px 20px rgba(0, 0, 0, 0.35);
-            padding: 11px 26px;
-            font-size: clamp(0.9rem, 3.2vw, 1.05rem);
+            padding: 10px 26px;
+            font-size: clamp(0.88rem, 3.1vw, 1.02rem);
         }
 
         .btn-gold:active {
@@ -326,8 +360,8 @@
         .btn-dark {
             background: linear-gradient(180deg, #475569 0%, #334155 100%);
             box-shadow: 0 5px 0 #0f172a, 0 10px 20px rgba(0, 0, 0, 0.35);
-            padding: 11px 26px;
-            font-size: clamp(0.9rem, 3.2vw, 1.05rem);
+            padding: 10px 26px;
+            font-size: clamp(0.88rem, 3.1vw, 1.02rem);
         }
 
         .btn-dark:active {
@@ -335,25 +369,76 @@
             box-shadow: 0 2px 0 #0f172a, 0 5px 10px rgba(0, 0, 0, 0.35);
         }
 
-        /* Admin Test Toggle Button */
-        .btn-admin {
-            background: linear-gradient(180deg, #475569 0%, #334155 100%);
-            color: #e2e8f0;
-            box-shadow: 0 5px 0 #0f172a, 0 10px 20px rgba(0, 0, 0, 0.35);
-            padding: 10px 22px;
-            font-size: clamp(0.84rem, 3vw, 0.96rem);
-            border: 2px solid rgba(255, 255, 255, 0.2);
+        /* Early Development Testing Notice */
+        .dev-testing-notice {
+            margin-top: 4px;
+            padding: 6px 15px;
+            border-radius: 20px;
+            background: rgba(15, 23, 42, 0.65);
+            border: 1.5px solid rgba(251, 191, 36, 0.45);
+            color: #fde68a;
+            font-size: clamp(0.7rem, 2.3vw, 0.8rem);
+            font-weight: 800;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
         }
 
-        .btn-admin.active {
-            background: linear-gradient(180deg, #a855f7 0%, #7e22ce 100%);
+        /* Sound Settings List */
+        .settings-card {
+            width: 100%;
+            background: rgba(30, 41, 59, 0.94);
+            border: 2px solid rgba(255, 255, 255, 0.18);
+            border-radius: 18px;
+            padding: 10px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            max-height: 55dvh;
+            overflow-y: auto;
+            touch-action: pan-y;
+        }
+
+        .sfx-toggle-row {
+            background: rgba(15, 23, 42, 0.65);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 8px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sfx-toggle-label {
+            font-size: clamp(0.8rem, 2.8vw, 0.9rem);
+            font-weight: 800;
+            color: #f8fafc;
+            text-align: left;
+        }
+
+        .sfx-toggle-btn {
+            background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%);
             color: #ffffff;
-            border-color: #f3e8ff;
-            box-shadow: 0 5px 0 #4c1d95, 0 0 18px rgba(168, 85, 247, 0.6);
+            border: none;
+            border-radius: 10px;
+            padding: 5px 12px;
+            font-size: clamp(0.72rem, 2.4vw, 0.8rem);
+            font-weight: 900;
+            cursor: pointer;
+            box-shadow: 0 2px 0 #14532d;
+            min-width: 54px;
+            text-transform: uppercase;
         }
 
-        .btn-admin:active {
-            transform: translateY(3px);
+        .sfx-toggle-btn.off {
+            background: #475569;
+            color: #cbd5e1;
+            box-shadow: 0 2px 0 #1e293b;
+        }
+
+        .sfx-toggle-btn:active {
+            transform: translateY(1px);
         }
 
         /* Upgrade Cards */
@@ -362,7 +447,7 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
 
         .upgrade-card {
@@ -469,7 +554,10 @@
         <div class="hud-badge">LVL: <span id="levelDisplay">1</span></div>
         <div class="hud-badge nugget-badge">🪙 <span id="nuggetDisplay">0</span></div>
         <div class="hud-badge">BEST: <span id="bestDisplay">0</span></div>
-        <button class="hud-pause-btn" id="pauseBtn" title="Pause Game">❚❚ PAUSE</button>
+        <div class="hud-controls">
+            <button class="hud-icon-btn" id="hudMuteBtn" title="Toggle Sound">🔊</button>
+            <button class="hud-icon-btn" id="pauseBtn" title="Pause Game">❚❚</button>
+        </div>
     </div>
 
     <div id="levelBanner">Level 2!</div>
@@ -481,7 +569,10 @@
     <div id="startScreen" class="overlay">
         <div class="menu-header-bar">
             <a class="top-back-link" href="https://djaschmitz07-maker.github.io/TDGames/" target="_top" rel="noopener noreferrer">◀ TD Gaming</a>
-            <div class="hud-badge nugget-badge">🪙 <span id="menuNuggetDisplay">0</span></div>
+            <div class="menu-header-right">
+                <button class="sound-toggle-pill" id="menuMuteBtn" title="Toggle Sound">🔊 SFX</button>
+                <div class="hud-badge nugget-badge">🪙 <span id="menuNuggetDisplay">0</span></div>
+            </div>
         </div>
 
         <h1 class="game-title">Cannon<br>Blast</h1>
@@ -492,8 +583,15 @@
         <div id="menuHomeView" class="menu-panel">
             <button class="btn" id="startBtn">▶ Play</button>
             <button class="btn btn-gold" id="openUpgradesBtn">⚙ Upgrades</button>
+            <button class="btn btn-secondary" id="openSettingsBtn">🎛 Sound Settings</button>
             <button class="btn btn-secondary" id="openHowToBtn">? How to Play</button>
-            <button class="btn btn-admin" id="adminToggleMenuBtn">🛠 Admin Test: OFF</button>
+            <div class="dev-testing-notice">🚧 Early Development Testing</div>
+        </div>
+
+        <!-- Sound Settings Sub-Menu View -->
+        <div id="menuSettingsView" class="menu-panel hidden">
+            <div class="settings-card" id="sfxSettingsList"></div>
+            <button class="btn btn-dark" id="backFromSettingsBtn">◀ Back</button>
         </div>
 
         <!-- Upgrades Sub-Menu View -->
@@ -541,7 +639,7 @@
         <h1 class="game-title" style="font-size: clamp(1.9rem, 7vw, 2.5rem); margin-bottom: 18px;">Paused</h1>
         <div class="menu-panel">
             <button class="btn" id="resumeBtn">▶ Resume</button>
-            <button class="btn btn-admin" id="adminTogglePauseBtn">🛠 Admin Test: OFF</button>
+            <button class="btn btn-secondary" id="pauseSettingsBtn">🎛 Sound Settings</button>
             <button class="btn btn-secondary" id="pauseRestartBtn">↻ Restart</button>
             <button class="btn btn-dark" id="pauseMainMenuBtn">⌂ Main Menu</button>
         </div>
@@ -597,10 +695,12 @@
     // Screens & Menu Panels
     const startScreen = document.getElementById('startScreen');
     const menuHomeView = document.getElementById('menuHomeView');
+    const menuSettingsView = document.getElementById('menuSettingsView');
     const menuUpgradesView = document.getElementById('menuUpgradesView');
     const menuHowToView = document.getElementById('menuHowToView');
     const pauseScreen = document.getElementById('pauseScreen');
     const gameOverScreen = document.getElementById('gameOverScreen');
+    const sfxSettingsList = document.getElementById('sfxSettingsList');
 
     // Final Stats Elements
     const finalScoreEl = document.getElementById('finalScore');
@@ -612,17 +712,20 @@
     // Buttons
     const startBtn = document.getElementById('startBtn');
     const openUpgradesBtn = document.getElementById('openUpgradesBtn');
+    const openSettingsBtn = document.getElementById('openSettingsBtn');
     const openHowToBtn = document.getElementById('openHowToBtn');
+    const backFromSettingsBtn = document.getElementById('backFromSettingsBtn');
     const backFromUpgradesBtn = document.getElementById('backFromUpgradesBtn');
     const backFromHowToBtn = document.getElementById('backFromHowToBtn');
     const pauseBtn = document.getElementById('pauseBtn');
     const resumeBtn = document.getElementById('resumeBtn');
+    const pauseSettingsBtn = document.getElementById('pauseSettingsBtn');
     const pauseRestartBtn = document.getElementById('pauseRestartBtn');
     const pauseMainMenuBtn = document.getElementById('pauseMainMenuBtn');
     const restartBtn = document.getElementById('restartBtn');
     const gameOverMainMenuBtn = document.getElementById('gameOverMainMenuBtn');
-    const adminToggleMenuBtn = document.getElementById('adminToggleMenuBtn');
-    const adminTogglePauseBtn = document.getElementById('adminTogglePauseBtn');
+    const hudMuteBtn = document.getElementById('hudMuteBtn');
+    const menuMuteBtn = document.getElementById('menuMuteBtn');
 
     // Upgrade UI Elements
     const upgFireLvlEl = document.getElementById('upgFireLvl');
@@ -635,15 +738,465 @@
     const hintLeft = document.getElementById('hint-left');
     const hintRight = document.getElementById('hint-right');
 
+    // Individual Sound Effect Toggles (All ON by default)
+    const SFX_OPTIONS = [
+        { key: 'cannonShot', label: '🔫 Cannon Fire' },
+        { key: 'rockHit', label: '🎯 Target Hit' },
+        { key: 'rockBreak', label: '💥 Rock Split / Break' },
+        { key: 'rockBounce', label: '🏀 Rock Bounce' },
+        { key: 'nugget', label: '🪙 Gold Nugget Chime' },
+        { key: 'levelUp', label: '⭐ Level Up & Meteor' },
+        { key: 'explosion', label: '🔥 Cannon Explosion' },
+        { key: 'ui', label: '🔘 Menu Clicks' }
+    ];
+
+    const sfxEnabled = {
+        cannonShot: true,
+        rockHit: true,
+        rockBreak: true,
+        rockBounce: true,
+        nugget: true,
+        levelUp: true,
+        explosion: true,
+        ui: true
+    };
+
+    let settingsReturnTarget = 'home'; // 'home' | 'paused'
+
+    // =========================================================================
+    // Soft, Non-Fatiguing Web Audio Synthesizer (Zero External Audio Files)
+    // =========================================================================
+    const SoftAudio = (() => {
+        let ctxAudio = null;
+        let masterGain = null;
+        let noiseBuffer = null;
+        let muted = false;
+        let lastShotTime = 0;
+        let lastHitTime = 0;
+
+        function ensureContext() {
+            if (muted) return false;
+            if (!ctxAudio) {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                if (!AudioCtx) return false;
+                ctxAudio = new AudioCtx();
+
+                const compressor = ctxAudio.createDynamicsCompressor();
+                compressor.threshold.value = -18;
+                compressor.knee.value = 18;
+                compressor.ratio.value = 4;
+                compressor.attack.value = 0.005;
+                compressor.release.value = 0.15;
+
+                masterGain = ctxAudio.createGain();
+                masterGain.gain.value = 0.42;
+
+                compressor.connect(masterGain);
+                masterGain.connect(ctxAudio.destination);
+
+                const sampleRate = ctxAudio.sampleRate;
+                noiseBuffer = ctxAudio.createBuffer(1, sampleRate, sampleRate);
+                const data = noiseBuffer.getChannelData(0);
+                let b0 = 0, b1 = 0, b2 = 0;
+                for (let i = 0; i < sampleRate; i++) {
+                    const white = Math.random() * 2 - 1;
+                    b0 = 0.99765 * b0 + white * 0.099046;
+                    b1 = 0.96300 * b1 + white * 0.2965164;
+                    b2 = 0.57000 * b2 + white * 1.0526913;
+                    data[i] = (b0 + b1 + b2 + white * 0.1848) * 0.18;
+                }
+            }
+            if (ctxAudio.state === 'suspended') {
+                ctxAudio.resume();
+            }
+            return true;
+        }
+
+        function setMuted(isMuted) {
+            muted = isMuted;
+            if (masterGain && ctxAudio) {
+                masterGain.gain.setTargetAtTime(muted ? 0 : 0.42, ctxAudio.currentTime, 0.03);
+            }
+            updateMuteButtons();
+        }
+
+        function toggleMute() {
+            setMuted(!muted);
+            if (!muted) {
+                ensureContext();
+                playUiTap();
+            }
+        }
+
+        function isMuted() {
+            return muted;
+        }
+
+        // Soft muted low-end thump for cannon fire
+        function playCannonShot() {
+            if (!sfxEnabled.cannonShot || !ensureContext()) return;
+            const now = ctxAudio.currentTime;
+            if (now - lastShotTime < 0.07) return;
+            lastShotTime = now;
+
+            const pitchJitter = 0.94 + Math.random() * 0.12;
+            const osc = ctxAudio.createOscillator();
+            const gain = ctxAudio.createGain();
+
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(195 * pitchJitter, now);
+            osc.frequency.exponentialRampToValueAtTime(68 * pitchJitter, now + 0.095);
+
+            gain.gain.setValueAtTime(0.001, now);
+            gain.gain.linearRampToValueAtTime(0.14, now + 0.008);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.105);
+
+            osc.connect(gain);
+            gain.connect(masterGain);
+
+            osc.start(now);
+            osc.stop(now + 0.11);
+        }
+
+        // Warm marimba-like tap when bullet hits a rock
+        function playRockHit(tier) {
+            if (!sfxEnabled.rockHit || !ensureContext()) return;
+            const now = ctxAudio.currentTime;
+            if (now - lastHitTime < 0.045) return;
+            lastHitTime = now;
+
+            const baseFreq = tier === 4 ? 175 : tier === 3 ? 215 : tier === 2 ? 275 : 345;
+            const pitchJitter = 0.95 + Math.random() * 0.10;
+
+            const osc = ctxAudio.createOscillator();
+            const gain = ctxAudio.createGain();
+
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(baseFreq * pitchJitter, now);
+            osc.frequency.exponentialRampToValueAtTime(baseFreq * 0.72 * pitchJitter, now + 0.075);
+
+            const filter = ctxAudio.createBiquadFilter();
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(900, now);
+
+            gain.gain.setValueAtTime(0.001, now);
+            gain.gain.linearRampToValueAtTime(0.16, now + 0.006);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.085);
+
+            osc.connect(filter);
+            filter.connect(gain);
+            gain.connect(masterGain);
+
+            osc.start(now);
+            osc.stop(now + 0.095);
+        }
+
+        // Soft hollow pop + muffled air burst when rock splits/breaks
+        function playRockBreak(tier) {
+            if (!sfxEnabled.rockBreak || !ensureContext()) return;
+            const now = ctxAudio.currentTime;
+            const baseFreq = tier === 4 ? 130 : tier === 3 ? 165 : tier === 2 ? 210 : 270;
+
+            const osc = ctxAudio.createOscillator();
+            const gain = ctxAudio.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(baseFreq, now);
+            osc.frequency.exponentialRampToValueAtTime(52, now + 0.22);
+
+            gain.gain.setValueAtTime(0.001, now);
+            gain.gain.linearRampToValueAtTime(0.28, now + 0.01);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.24);
+
+            osc.connect(gain);
+            gain.connect(masterGain);
+            osc.start(now);
+            osc.stop(now + 0.25);
+
+            if (noiseBuffer) {
+                const noise = ctxAudio.createBufferSource();
+                noise.buffer = noiseBuffer;
+                const filter = ctxAudio.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(650, now);
+                filter.frequency.exponentialRampToValueAtTime(180, now + 0.2);
+
+                const nGain = ctxAudio.createGain();
+                nGain.gain.setValueAtTime(0.001, now);
+                nGain.gain.linearRampToValueAtTime(0.18, now + 0.012);
+                nGain.gain.exponentialRampToValueAtTime(0.001, now + 0.21);
+
+                noise.connect(filter);
+                filter.connect(nGain);
+                nGain.connect(masterGain);
+                noise.start(now);
+                noise.stop(now + 0.22);
+            }
+        }
+
+        // Subtle rubbery thud on rock ground bounce
+        function playRockBounce(tier) {
+            if (!sfxEnabled.rockBounce || !ensureContext()) return;
+            const now = ctxAudio.currentTime;
+            const freq = tier >= 3 ? 98 : tier === 2 ? 128 : 162;
+
+            const osc = ctxAudio.createOscillator();
+            const gain = ctxAudio.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq * 0.85, now);
+            osc.frequency.exponentialRampToValueAtTime(freq * 1.15, now + 0.04);
+            osc.frequency.exponentialRampToValueAtTime(freq * 0.65, now + 0.11);
+
+            gain.gain.setValueAtTime(0.001, now);
+            gain.gain.linearRampToValueAtTime(tier >= 3 ? 0.10 : 0.06, now + 0.008);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+
+            osc.connect(gain);
+            gain.connect(masterGain);
+            osc.start(now);
+            osc.stop(now + 0.13);
+        }
+
+        // Gentle two-note bell chime for collecting gold nuggets
+        function playNuggetCollect() {
+            if (!sfxEnabled.nugget || !ensureContext()) return;
+            const now = ctxAudio.currentTime;
+            const notes = [659.25, 987.77];
+
+            notes.forEach((freq, idx) => {
+                const start = now + idx * 0.055;
+                const osc = ctxAudio.createOscillator();
+                const gain = ctxAudio.createGain();
+
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(freq, start);
+
+                gain.gain.setValueAtTime(0.001, start);
+                gain.gain.linearRampToValueAtTime(0.16, start + 0.01);
+                gain.gain.exponentialRampToValueAtTime(0.001, start + 0.28);
+
+                osc.connect(gain);
+                gain.connect(masterGain);
+                osc.start(start);
+                osc.stop(start + 0.3);
+            });
+        }
+
+        // Warm major arpeggio for Level Up
+        function playLevelUp() {
+            if (!sfxEnabled.levelUp || !ensureContext()) return;
+            const now = ctxAudio.currentTime;
+            const chord = [523.25, 659.25, 783.99, 1046.50];
+
+            chord.forEach((freq, idx) => {
+                const start = now + idx * 0.075;
+                const osc = ctxAudio.createOscillator();
+                const gain = ctxAudio.createGain();
+
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(freq, start);
+
+                const filter = ctxAudio.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(1600, start);
+
+                gain.gain.setValueAtTime(0.001, start);
+                gain.gain.linearRampToValueAtTime(0.15, start + 0.015);
+                gain.gain.exponentialRampToValueAtTime(0.001, start + 0.36);
+
+                osc.connect(filter);
+                filter.connect(gain);
+                gain.connect(masterGain);
+                osc.start(start);
+                osc.stop(start + 0.38);
+            });
+        }
+
+        // Low soft descending whoosh when black meteor spawns
+        function playMeteorWarning() {
+            if (!sfxEnabled.levelUp || !ensureContext()) return;
+            const now = ctxAudio.currentTime;
+            const osc = ctxAudio.createOscillator();
+            const gain = ctxAudio.createGain();
+
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(240, now);
+            osc.frequency.exponentialRampToValueAtTime(82, now + 0.45);
+
+            gain.gain.setValueAtTime(0.001, now);
+            gain.gain.linearRampToValueAtTime(0.18, now + 0.08);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.48);
+
+            osc.connect(gain);
+            gain.connect(masterGain);
+            osc.start(now);
+            osc.stop(now + 0.5);
+        }
+
+        // Deep warm sub-boom + low-pass rumble for cannon explosion
+        function playCannonExplosion() {
+            if (!sfxEnabled.explosion || !ensureContext()) return;
+            const now = ctxAudio.currentTime;
+
+            const sub = ctxAudio.createOscillator();
+            const subGain = ctxAudio.createGain();
+            sub.type = 'sine';
+            sub.frequency.setValueAtTime(135, now);
+            sub.frequency.exponentialRampToValueAtTime(34, now + 0.65);
+
+            subGain.gain.setValueAtTime(0.001, now);
+            subGain.gain.linearRampToValueAtTime(0.42, now + 0.015);
+            subGain.gain.exponentialRampToValueAtTime(0.001, now + 0.72);
+
+            sub.connect(subGain);
+            subGain.connect(masterGain);
+            sub.start(now);
+            sub.stop(now + 0.75);
+
+            if (noiseBuffer) {
+                const noise = ctxAudio.createBufferSource();
+                noise.buffer = noiseBuffer;
+
+                const filter = ctxAudio.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(480, now);
+                filter.frequency.exponentialRampToValueAtTime(95, now + 0.68);
+
+                const nGain = ctxAudio.createGain();
+                nGain.gain.setValueAtTime(0.001, now);
+                nGain.gain.linearRampToValueAtTime(0.32, now + 0.02);
+                nGain.gain.exponentialRampToValueAtTime(0.001, now + 0.72);
+
+                noise.connect(filter);
+                filter.connect(nGain);
+                nGain.connect(masterGain);
+                noise.start(now);
+                noise.stop(now + 0.75);
+            }
+        }
+
+        // Soft gentle click for UI & upgrades
+        function playUiTap(isUpgrade = false) {
+            if (!sfxEnabled.ui || !ensureContext()) return;
+            const now = ctxAudio.currentTime;
+            const osc = ctxAudio.createOscillator();
+            const gain = ctxAudio.createGain();
+
+            osc.type = 'sine';
+            if (isUpgrade) {
+                osc.frequency.setValueAtTime(440, now);
+                osc.frequency.exponentialRampToValueAtTime(660, now + 0.09);
+            } else {
+                osc.frequency.setValueAtTime(390, now);
+                osc.frequency.exponentialRampToValueAtTime(480, now + 0.055);
+            }
+
+            gain.gain.setValueAtTime(0.001, now);
+            gain.gain.linearRampToValueAtTime(0.14, now + 0.008);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + (isUpgrade ? 0.14 : 0.07));
+
+            osc.connect(gain);
+            gain.connect(masterGain);
+            osc.start(now);
+            osc.stop(now + (isUpgrade ? 0.15 : 0.08));
+        }
+
+        function previewSfx(key) {
+            if (!sfxEnabled[key]) return;
+            if (key === 'cannonShot') {
+                lastShotTime = 0;
+                playCannonShot();
+            } else if (key === 'rockHit') {
+                lastHitTime = 0;
+                playRockHit(2);
+            } else if (key === 'rockBreak') {
+                playRockBreak(2);
+            } else if (key === 'rockBounce') {
+                playRockBounce(3);
+            } else if (key === 'nugget') {
+                playNuggetCollect();
+            } else if (key === 'levelUp') {
+                playLevelUp();
+            } else if (key === 'explosion') {
+                playCannonExplosion();
+            } else if (key === 'ui') {
+                playUiTap(true);
+            }
+        }
+
+        return {
+            ensureContext,
+            toggleMute,
+            isMuted,
+            previewSfx,
+            playCannonShot,
+            playRockHit,
+            playRockBreak,
+            playRockBounce,
+            playNuggetCollect,
+            playLevelUp,
+            playMeteorWarning,
+            playCannonExplosion,
+            playUiTap
+        };
+    })();
+
+    // Render Sound Settings Toggle List
+    function renderSoundSettings() {
+        sfxSettingsList.innerHTML = '';
+
+        SFX_OPTIONS.forEach((item) => {
+            const isOn = sfxEnabled[item.key];
+            const row = document.createElement('div');
+            row.className = 'sfx-toggle-row';
+
+            const label = document.createElement('div');
+            label.className = 'sfx-toggle-label';
+            label.textContent = item.label;
+
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = isOn ? 'sfx-toggle-btn' : 'sfx-toggle-btn off';
+            btn.textContent = isOn ? 'ON' : 'OFF';
+
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                SoftAudio.ensureContext();
+                sfxEnabled[item.key] = !sfxEnabled[item.key];
+                const enabledNow = sfxEnabled[item.key];
+                btn.textContent = enabledNow ? 'ON' : 'OFF';
+                btn.className = enabledNow ? 'sfx-toggle-btn' : 'sfx-toggle-btn off';
+                if (enabledNow) {
+                    SoftAudio.previewSfx(item.key);
+                }
+            });
+
+            row.appendChild(label);
+            row.appendChild(btn);
+            sfxSettingsList.appendChild(row);
+        });
+    }
+
+    function updateMuteButtons() {
+        const muted = SoftAudio.isMuted();
+        hudMuteBtn.textContent = muted ? '🔇' : '🔊';
+        menuMuteBtn.textContent = muted ? '🔇 SFX' : '🔊 SFX';
+    }
+
+    hudMuteBtn.addEventListener('pointerdown', (e) => e.stopPropagation());
+    hudMuteBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        SoftAudio.toggleMute();
+    });
+    menuMuteBtn.addEventListener('click', () => SoftAudio.toggleMute());
+
     // Fixed Virtual World Dimensions (Zoomed-out 640x1140 arena)
     const WORLD_WIDTH = 640;
     const WORLD_HEIGHT = 1140;
     const groundHeight = 84;
     const BASE_SPAWN_INTERVAL = 17.6;
 
-    // Persistent Bank, Admin Test Mode & Upgrades State
-    let regularGoldNuggets = 0;
-    let isAdminTest = false;
+    // Persistent Bank & Upgrades State
+    let goldNuggets = 0;
     let highScore = 0;
     const upgrades = {
         fireRate: 1,
@@ -652,7 +1205,7 @@
     };
 
     // Active Run State
-    let gameMode = 'menu'; // 'menu' | 'playing' | 'paused' | 'gameover'
+    let gameMode = 'menu'; // 'menu' | 'playing' | 'paused' | 'exploding' | 'gameover'
     let score = 0;
     let runNuggets = 0;
     let currentLevel = 1;
@@ -663,6 +1216,7 @@
     let screenShake = 0;
     let bannerTimeout = null;
     let menuDemoTimer = 0;
+    let explosionTimer = 0;
 
     // Input State
     let moveDir = 0; // -1 left, 0 stop, 1 right
@@ -680,6 +1234,8 @@
     let nuggets = [];
     let particles = [];
     let shockwaves = [];
+    let explosions = [];
+    let debris = [];
     let clouds = [];
 
     // Cannon Object
@@ -699,7 +1255,8 @@
         fireRate: 0.44,
         bulletDamage: 1,
         fireTimer: 0,
-        recoil: 0
+        recoil: 0,
+        destroyed: false
     };
 
     const BULLET_IMPULSE = 540;
@@ -788,27 +1345,11 @@
         return lvl * 3;
     }
 
-    function getFormattedGoldText() {
-        return isAdminTest ? '∞' : `${regularGoldNuggets}`;
-    }
-
-    function toggleAdminTest() {
-        isAdminTest = !isAdminTest;
-        syncMenuAndHudDisplays();
-    }
-
     function syncMenuAndHudDisplays() {
-        const goldText = getFormattedGoldText();
         menuBestDisplay.textContent = highScore;
-        menuNuggetDisplay.textContent = goldText;
+        menuNuggetDisplay.textContent = goldNuggets;
         bestDisplay.textContent = highScore;
-        nuggetDisplay.textContent = goldText;
-
-        const adminLabel = isAdminTest ? '🛠 Admin Test: ON (∞)' : '🛠 Admin Test: OFF';
-        adminToggleMenuBtn.textContent = adminLabel;
-        adminTogglePauseBtn.textContent = adminLabel;
-        adminToggleMenuBtn.classList.toggle('active', isAdminTest);
-        adminTogglePauseBtn.classList.toggle('active', isAdminTest);
+        nuggetDisplay.textContent = goldNuggets;
 
         upgFireLvlEl.textContent = `Lv.${upgrades.fireRate}`;
         upgPowerLvlEl.textContent = `Lv.${upgrades.power}`;
@@ -822,18 +1363,23 @@
         buyPowerBtn.textContent = upgrades.power >= 6 ? 'MAX' : `🪙 ${powerCost}`;
         buySpeedBtn.textContent = upgrades.speed >= 7 ? 'MAX' : `🪙 ${speedCost}`;
 
-        buyFireBtn.disabled = upgrades.fireRate >= 8 || (!isAdminTest && regularGoldNuggets < fireCost);
-        buyPowerBtn.disabled = upgrades.power >= 6 || (!isAdminTest && regularGoldNuggets < powerCost);
-        buySpeedBtn.disabled = upgrades.speed >= 7 || (!isAdminTest && regularGoldNuggets < speedCost);
+        buyFireBtn.disabled = upgrades.fireRate >= 8 || goldNuggets < fireCost;
+        buyPowerBtn.disabled = upgrades.power >= 6 || goldNuggets < powerCost;
+        buySpeedBtn.disabled = upgrades.speed >= 7 || goldNuggets < speedCost;
     }
 
     // Main Menu Navigation Functions
     function showMenuPanel(panelName) {
         menuHomeView.classList.add('hidden');
+        menuSettingsView.classList.add('hidden');
         menuUpgradesView.classList.add('hidden');
         menuHowToView.classList.add('hidden');
 
         if (panelName === 'home') menuHomeView.classList.remove('hidden');
+        else if (panelName === 'settings') {
+            renderSoundSettings();
+            menuSettingsView.classList.remove('hidden');
+        }
         else if (panelName === 'upgrades') menuUpgradesView.classList.remove('hidden');
         else if (panelName === 'howto') menuHowToView.classList.remove('hidden');
 
@@ -842,6 +1388,7 @@
 
     function openMainMenu() {
         gameMode = 'menu';
+        settingsReturnTarget = 'home';
         screenShake = 0;
         moveDir = 0;
         activePointerId = null;
@@ -850,6 +1397,8 @@
         nuggets = [];
         particles = [];
         shockwaves = [];
+        explosions = [];
+        debris = [];
 
         cannon.x = WORLD_WIDTH / 2;
         cannon.y = WORLD_HEIGHT - groundHeight;
@@ -859,6 +1408,7 @@
         cannon.tiltVel = 0;
         cannon.bobOffset = 0;
         cannon.recoil = 0;
+        cannon.destroyed = false;
 
         hudEl.classList.add('hidden');
         pauseScreen.classList.add('hidden');
@@ -866,7 +1416,7 @@
         levelBanner.classList.remove('show');
         hideControlHints();
 
-        // Spawn a couple of lively bouncing rocks behind the Main Menu
+        // Spawn gentle decorative rocks bouncing behind the menu
         spawnRock(3, WORLD_WIDTH * 0.28, 220, 75, 40, 10, 0.5);
         spawnRock(2, WORLD_WIDTH * 0.72, 340, -85, -180, 5, -1.2);
 
@@ -874,48 +1424,83 @@
         startScreen.classList.remove('hidden');
     }
 
-    // Menu & Admin Test Button Listeners
-    adminToggleMenuBtn.addEventListener('click', toggleAdminTest);
-    adminTogglePauseBtn.addEventListener('click', toggleAdminTest);
+    // Menu Button Listeners
+    openUpgradesBtn.addEventListener('click', () => {
+        SoftAudio.playUiTap();
+        showMenuPanel('upgrades');
+    });
+    openSettingsBtn.addEventListener('click', () => {
+        SoftAudio.playUiTap();
+        settingsReturnTarget = 'home';
+        showMenuPanel('settings');
+    });
+    openHowToBtn.addEventListener('click', () => {
+        SoftAudio.playUiTap();
+        showMenuPanel('howto');
+    });
+    backFromSettingsBtn.addEventListener('click', () => {
+        SoftAudio.playUiTap();
+        if (settingsReturnTarget === 'paused') {
+            startScreen.classList.add('hidden');
+            pauseScreen.classList.remove('hidden');
+        } else {
+            showMenuPanel('home');
+        }
+    });
+    backFromUpgradesBtn.addEventListener('click', () => {
+        SoftAudio.playUiTap();
+        showMenuPanel('home');
+    });
+    backFromHowToBtn.addEventListener('click', () => {
+        SoftAudio.playUiTap();
+        showMenuPanel('home');
+    });
 
-    openUpgradesBtn.addEventListener('click', () => showMenuPanel('upgrades'));
-    openHowToBtn.addEventListener('click', () => showMenuPanel('howto'));
-    backFromUpgradesBtn.addEventListener('click', () => showMenuPanel('home'));
-    backFromHowToBtn.addEventListener('click', () => showMenuPanel('home'));
+    pauseSettingsBtn.addEventListener('click', () => {
+        SoftAudio.playUiTap();
+        settingsReturnTarget = 'paused';
+        pauseScreen.classList.add('hidden');
+        showMenuPanel('settings');
+        startScreen.classList.remove('hidden');
+    });
 
     buyFireBtn.addEventListener('click', () => {
         const cost = getUpgradeCost('fireRate');
-        if (upgrades.fireRate < 8 && (isAdminTest || regularGoldNuggets >= cost)) {
-            if (!isAdminTest) regularGoldNuggets -= cost;
+        if (upgrades.fireRate < 8 && goldNuggets >= cost) {
+            goldNuggets -= cost;
             upgrades.fireRate += 1;
             applyCannonUpgrades();
             syncMenuAndHudDisplays();
+            SoftAudio.playUiTap(true);
         }
     });
 
     buyPowerBtn.addEventListener('click', () => {
         const cost = getUpgradeCost('power');
-        if (upgrades.power < 6 && (isAdminTest || regularGoldNuggets >= cost)) {
-            if (!isAdminTest) regularGoldNuggets -= cost;
+        if (upgrades.power < 6 && goldNuggets >= cost) {
+            goldNuggets -= cost;
             upgrades.power += 1;
             applyCannonUpgrades();
             syncMenuAndHudDisplays();
+            SoftAudio.playUiTap(true);
         }
     });
 
     buySpeedBtn.addEventListener('click', () => {
         const cost = getUpgradeCost('speed');
-        if (upgrades.speed < 7 && (isAdminTest || regularGoldNuggets >= cost)) {
-            if (!isAdminTest) regularGoldNuggets -= cost;
+        if (upgrades.speed < 7 && goldNuggets >= cost) {
+            goldNuggets -= cost;
             upgrades.speed += 1;
             applyCannonUpgrades();
             syncMenuAndHudDisplays();
+            SoftAudio.playUiTap(true);
         }
     });
 
     // Pause & Resume Controls
     function pauseGame() {
         if (gameMode !== 'playing') return;
+        SoftAudio.playUiTap();
         gameMode = 'paused';
         screenShake = 0;
         moveDir = 0;
@@ -926,6 +1511,8 @@
 
     function resumeGame() {
         if (gameMode !== 'paused') return;
+        SoftAudio.playUiTap();
+        startScreen.classList.add('hidden');
         pauseScreen.classList.add('hidden');
         gameMode = 'playing';
         lastTime = performance.now();
@@ -939,9 +1526,18 @@
         pauseGame();
     });
     resumeBtn.addEventListener('click', resumeGame);
-    pauseRestartBtn.addEventListener('click', startGame);
-    pauseMainMenuBtn.addEventListener('click', openMainMenu);
-    gameOverMainMenuBtn.addEventListener('click', openMainMenu);
+    pauseRestartBtn.addEventListener('click', () => {
+        SoftAudio.playUiTap();
+        startGame();
+    });
+    pauseMainMenuBtn.addEventListener('click', () => {
+        SoftAudio.playUiTap();
+        openMainMenu();
+    });
+    gameOverMainMenuBtn.addEventListener('click', () => {
+        SoftAudio.playUiTap();
+        openMainMenu();
+    });
 
     // Set internal canvas resolution to exact virtual world size (scaled via CSS)
     function resize() {
@@ -979,6 +1575,7 @@
     }
 
     container.addEventListener('pointerdown', (e) => {
+        SoftAudio.ensureContext();
         if (gameMode !== 'playing') return;
         if (e.target.closest('button')) return;
         activePointerId = e.pointerId;
@@ -1005,6 +1602,7 @@
 
     // Keyboard support for desktop convenience
     window.addEventListener('keydown', (e) => {
+        SoftAudio.ensureContext();
         if (e.key === 'Escape' && (gameMode === 'playing' || gameMode === 'paused')) {
             if (gameMode === 'playing') pauseGame();
             else resumeGame();
@@ -1035,6 +1633,7 @@
     function advanceToNextLevel() {
         currentLevel += 1;
         levelDisplay.textContent = currentLevel;
+        SoftAudio.playLevelUp();
 
         spawnInterval = getLevelSpawnInterval(currentLevel);
         spawnTimer = spawnInterval;
@@ -1062,6 +1661,8 @@
 
     // Start / Reset Game
     function startGame() {
+        SoftAudio.ensureContext();
+        SoftAudio.playUiTap();
         resize();
         applyCannonUpgrades();
         screenShake = 0;
@@ -1070,12 +1671,14 @@
         nuggets = [];
         particles = [];
         shockwaves = [];
+        explosions = [];
+        debris = [];
         score = 0;
         runNuggets = 0;
         currentLevel = 1;
 
         scoreDisplay.textContent = '0';
-        nuggetDisplay.textContent = getFormattedGoldText();
+        nuggetDisplay.textContent = goldNuggets;
         bestDisplay.textContent = highScore;
         levelDisplay.textContent = '1';
         levelBanner.classList.remove('show');
@@ -1095,6 +1698,7 @@
         cannon.bobOffset = 0;
         cannon.wheelAngle = 0;
         cannon.fireTimer = 0;
+        cannon.destroyed = false;
 
         hintLeft.style.opacity = '1';
         hintRight.style.opacity = '1';
@@ -1104,7 +1708,7 @@
         gameOverScreen.classList.add('hidden');
         hudEl.classList.remove('hidden');
 
-        // Spawn first big rock (10)
+        // Spawn first big rock immediately
         spawnRock(3);
 
         gameMode = 'playing';
@@ -1114,7 +1718,6 @@
     startBtn.addEventListener('click', startGame);
     restartBtn.addEventListener('click', startGame);
 
-    // Spawn a Rock from top or split from parent rock
     function spawnRock(tier, customX, customY, customVx, customVy, customHp, customRotSpeed) {
         const config = ROCK_TIERS[tier];
         const margin = config.radius + 12;
@@ -1157,7 +1760,7 @@
         });
     }
 
-    // Spawn a shiny, numberless bouncing gold nugget when a little gold rock (tier 1) is destroyed
+    // Spawn a shiny, numberless bouncing gold nugget when a little gold rock is destroyed
     function spawnGoldNugget(x, y, parentVx, parentRotSpeed) {
         const vertices = [];
         const pointsCount = 8;
@@ -1185,7 +1788,7 @@
         });
     }
 
-    // Spawn a dark black 50-HP (scaled by level) meteor rock diving directly toward the cannon
+    // Spawn dark black 50-HP rock diving straight toward the cannon after 6s without hitting a rock
     function spawnBlackMeteor() {
         const config = ROCK_TIERS[4];
         const margin = config.radius + 16;
@@ -1202,6 +1805,7 @@
         const vx = Math.max(-config.maxVx, Math.min(config.maxVx, (targetX - startX) / flightTime));
         const vy = (targetY - startY - 0.5 * gravity * flightTime * flightTime) / flightTime;
 
+        SoftAudio.playMeteorWarning();
         spawnRock(4, startX, startY, vx, Math.max(260, vy), getScaledRockHp(4));
     }
 
@@ -1234,7 +1838,186 @@
         });
     }
 
-    // Subtle live background animation behind the Main Menu
+    // Dramatic Cannon Explosion when crushed
+    function spawnCannonExplosion(x, y) {
+        cannon.destroyed = true;
+        SoftAudio.playCannonExplosion();
+
+        explosions.push({
+            x: x,
+            y: y - 18,
+            radius: 16,
+            maxRadius: 118,
+            life: 0.62,
+            maxLife: 0.62
+        });
+
+        const offsets = [
+            { dx: -24, dy: -12, delay: 0.05, maxR: 72 },
+            { dx: 24, dy: -14, delay: 0.08, maxR: 76 },
+            { dx: 0, dy: -36, delay: 0.04, maxR: 82 }
+        ];
+        for (const off of offsets) {
+            explosions.push({
+                x: x + off.dx,
+                y: y + off.dy,
+                radius: 10,
+                maxRadius: off.maxR,
+                life: 0.55,
+                maxLife: 0.55
+            });
+        }
+
+        shockwaves.push({
+            x: x,
+            y: y - 16,
+            radius: 14,
+            maxRadius: 165,
+            color: '#fef08a',
+            alpha: 0.95,
+            life: 0.48
+        });
+        shockwaves.push({
+            x: x,
+            y: y - 16,
+            radius: 8,
+            maxRadius: 120,
+            color: '#f97316',
+            alpha: 0.9,
+            life: 0.40
+        });
+
+        const blastColors = ['#ffffff', '#fef08a', '#facc15', '#f97316', '#ef4444', '#334155', '#1e293b'];
+        for (let i = 0; i < 55; i++) {
+            const angle = -Math.PI + Math.random() * Math.PI;
+            const speed = 110 + Math.random() * 340;
+            const isSmoke = i >= 38;
+            particles.push({
+                x: x + (Math.random() - 0.5) * 28,
+                y: y - 14 + (Math.random() - 0.5) * 18,
+                vx: Math.cos(angle) * speed,
+                vy: Math.sin(angle) * speed - (isSmoke ? 90 : 50),
+                size: isSmoke ? (8 + Math.random() * 10) : (3.5 + Math.random() * 6),
+                color: isSmoke ? (Math.random() < 0.5 ? '#334155' : '#475569') : blastColors[i % 5],
+                alpha: 1,
+                life: isSmoke ? (0.65 + Math.random() * 0.35) : (0.45 + Math.random() * 0.35),
+                isSmoke: isSmoke
+            });
+        }
+
+        debris.push({
+            type: 'wheel',
+            x: x - 21,
+            y: y - cannon.wheelRadius,
+            vx: -230 - Math.random() * 90,
+            vy: -360 - Math.random() * 80,
+            rotation: 0,
+            rotSpeed: -11,
+            radius: cannon.wheelRadius
+        });
+        debris.push({
+            type: 'wheel',
+            x: x + 21,
+            y: y - cannon.wheelRadius,
+            vx: 230 + Math.random() * 90,
+            vy: -360 - Math.random() * 80,
+            rotation: 0,
+            rotSpeed: 11,
+            radius: cannon.wheelRadius
+        });
+        debris.push({
+            type: 'barrel',
+            x: x,
+            y: y - 34,
+            vx: (Math.random() - 0.5) * 240,
+            vy: -470 - Math.random() * 90,
+            rotation: 0,
+            rotSpeed: (Math.random() < 0.5 ? -1 : 1) * 9.5
+        });
+        for (let i = 0; i < 6; i++) {
+            debris.push({
+                type: 'shard',
+                x: x + (Math.random() - 0.5) * 30,
+                y: y - 18,
+                vx: (Math.random() - 0.5) * 380,
+                vy: -260 - Math.random() * 240,
+                rotation: Math.random() * Math.PI * 2,
+                rotSpeed: (Math.random() - 0.5) * 16,
+                color: i % 2 === 0 ? '#2563eb' : '#475569',
+                w: 10 + Math.random() * 8,
+                h: 6 + Math.random() * 6
+            });
+        }
+    }
+
+    function updateEffects(dt) {
+        const gravity = 520;
+        const floorY = WORLD_HEIGHT - groundHeight;
+
+        for (let i = explosions.length - 1; i >= 0; i--) {
+            const ex = explosions[i];
+            ex.life -= dt;
+            const progress = 1 - Math.max(0, ex.life / ex.maxLife);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            ex.radius = 12 + (ex.maxRadius - 12) * eased;
+            if (ex.life <= 0) {
+                explosions.splice(i, 1);
+            }
+        }
+
+        for (let i = debris.length - 1; i >= 0; i--) {
+            const d = debris[i];
+            d.vy += gravity * dt;
+            d.x += d.vx * dt;
+            d.y += d.vy * dt;
+            d.rotation += d.rotSpeed * dt;
+
+            const bounceRadius = d.radius || 8;
+            if (d.x - bounceRadius < 0) {
+                d.x = bounceRadius;
+                d.vx = Math.abs(d.vx) * 0.75;
+            } else if (d.x + bounceRadius > WORLD_WIDTH) {
+                d.x = WORLD_WIDTH - bounceRadius;
+                d.vx = -Math.abs(d.vx) * 0.75;
+            }
+
+            if (d.y + bounceRadius >= floorY) {
+                d.y = floorY - bounceRadius;
+                d.vy = -Math.abs(d.vy) * 0.52;
+                d.vx *= 0.82;
+                d.rotSpeed *= 0.75;
+            }
+        }
+
+        for (let i = shockwaves.length - 1; i >= 0; i--) {
+            const s = shockwaves[i];
+            s.life -= dt;
+            s.y -= 25 * dt;
+            s.radius += (s.maxRadius - s.radius) * (1 - Math.exp(-11 * dt));
+            s.alpha = Math.max(0, s.life * 2.1);
+            if (s.life <= 0) {
+                shockwaves.splice(i, 1);
+            }
+        }
+
+        for (let i = particles.length - 1; i >= 0; i--) {
+            const p = particles[i];
+            p.vy += (p.isSmoke ? -40 : 380) * dt;
+            p.x += p.vx * dt;
+            p.y += p.vy * dt;
+            if (p.isSmoke) {
+                p.vx *= Math.exp(-2.5 * dt);
+                p.size += 12 * dt;
+            }
+            p.life -= dt;
+            p.alpha = Math.max(0, p.life * 1.8);
+            if (p.life <= 0) {
+                particles.splice(i, 1);
+            }
+        }
+    }
+
+    // Gentle background animation while on the Main Menu
     function updateMenuBackground(dt) {
         for (const c of clouds) {
             c.x += c.speed * dt;
@@ -1276,18 +2059,49 @@
         }
     }
 
-    // Main Update Loop (runs strictly in 640x1140 virtual world coordinates)
+    function updateExplosionSequence(dt) {
+        explosionTimer -= dt;
+        updateEffects(dt);
+
+        const gravity = 380;
+        const floorY = WORLD_HEIGHT - groundHeight;
+        for (const r of rocks) {
+            const config = ROCK_TIERS[r.tier];
+            r.vy += gravity * dt;
+            r.x += r.vx * dt;
+            r.y += r.vy * dt;
+            r.rotation += r.rotSpeed * dt;
+
+            if (r.x - r.radius < 0) {
+                r.x = r.radius;
+                r.vx = Math.abs(r.vx);
+            } else if (r.x + r.radius > WORLD_WIDTH) {
+                r.x = WORLD_WIDTH - r.radius;
+                r.vx = -Math.abs(r.vx);
+            }
+            if (r.y + r.radius >= floorY) {
+                r.y = floorY - r.radius;
+                r.vy = config.bounceVel;
+            }
+        }
+
+        if (explosionTimer <= 0) {
+            showGameOverScreen();
+        }
+    }
+
     function update(dt) {
         if (screenShake > 0) {
             screenShake = Math.max(0, screenShake - dt * 28);
         }
 
+        // Update clouds
         for (const c of clouds) {
             c.x += c.speed * dt;
             if (c.x > WORLD_WIDTH + 100) c.x = -100;
         }
 
-        // Two-stage eased input & velocity smoothing
+        // Update Cannon Movement (Two-stage smooth S-curve easing + spring-damped suspension)
         const prevX = cannon.x;
         const prevVx = cannon.vx;
         const inputLerp = 1 - Math.exp(-16 * dt);
@@ -1324,18 +2138,21 @@
         const targetBob = speedRatio * 1.6;
         cannon.bobOffset += (targetBob - cannon.bobOffset) * (1 - Math.exp(-12 * dt));
 
+        // Rotate wheels proportionally to horizontal travel
         const dx = cannon.x - prevX;
         cannon.wheelAngle += dx / cannon.wheelRadius;
 
+        // Recoil recovery
         if (cannon.recoil > 0) {
             cannon.recoil = Math.max(0, cannon.recoil - dt * 35);
         }
 
-        // Constantly shoot upwards
+        // Constant Upward Firing
         cannon.fireTimer -= dt;
         if (cannon.fireTimer <= 0) {
             cannon.fireTimer = cannon.fireRate;
             cannon.recoil = 5;
+            SoftAudio.playCannonShot();
             bullets.push({
                 x: cannon.x,
                 y: cannon.y - cannon.height - 6,
@@ -1354,14 +2171,14 @@
             }
         }
 
-        // Check 6-second no-hit timer
+        // 6-Second No-Hit Ambush Timer -> Dark Black 50-HP Meteor Rock
         noHitTimer += dt;
         if (noHitTimer >= 6.0) {
             noHitTimer = 0;
             spawnBlackMeteor();
         }
 
-        // Spawn Rocks periodically
+        // Rock Spawning
         spawnTimer -= dt;
         if (spawnTimer <= 0) {
             const totalMass = rocks.reduce((acc, r) => acc + Math.min(r.tier, 3), 0);
@@ -1373,7 +2190,7 @@
             spawnTimer = spawnInterval;
         }
 
-        // Update Rocks
+        // Update Rocks & Collisions
         const gravity = 380;
         const floorY = WORLD_HEIGHT - groundHeight;
         let shouldAdvanceLevel = false;
@@ -1400,6 +2217,7 @@
                 r.hitFlash = Math.max(0, r.hitFlash - dt * 8);
             }
 
+            // Wall bounces
             if (r.x - r.radius < 0) {
                 r.x = r.radius;
                 r.vx = Math.abs(r.vx);
@@ -1410,17 +2228,19 @@
                 r.rotSpeed *= 0.8;
             }
 
+            // Ground bounce + spin grip kick
             if (r.y + r.radius >= floorY) {
                 r.y = floorY - r.radius;
                 r.vy = config.bounceVel;
                 r.squashY = 0.84;
+                SoftAudio.playRockBounce(r.tier);
 
                 const spinKick = r.rotSpeed * config.groundGrip;
                 r.vx = Math.max(-config.maxVx, Math.min(config.maxVx, r.vx + spinKick));
                 r.rotSpeed *= 0.78;
             }
 
-            // Check Bullet Collisions
+            // Bullet vs Rock Collision
             let rockDestroyed = false;
             for (let j = bullets.length - 1; j >= 0; j--) {
                 const b = bullets[j];
@@ -1437,9 +2257,11 @@
                     r.hitFlash = 1;
                     r.hitGlow = Math.min(1.0, r.hitGlow + 0.55);
 
+                    // True Newtonian impulse scaled by rock mass
                     const upwardKnockback = BULLET_IMPULSE / r.mass;
                     r.vy = Math.max(config.maxUpVel, r.vy - upwardKnockback);
 
+                    // Off-center hit applies spin torque & horizontal deflection
                     const offsetNorm = Math.max(-1, Math.min(1, distX / r.radius));
                     r.rotSpeed = Math.max(
                         -config.maxSpin,
@@ -1461,9 +2283,11 @@
                     if (r.hp <= 0) {
                         rockDestroyed = true;
                         screenShake = Math.min(r.tier, 3) * 2.5;
+                        SoftAudio.playRockBreak(r.tier);
                         createParticles(r.x, r.y, config.color, r.tier === 4 ? 22 : 14);
 
                         if (r.tier === 4) {
+                            // Dark black 50-HP rock shatters into 5 small (tier 1) pieces
                             const smallConfig = ROCK_TIERS[1];
                             const smallHp = getScaledRockHp(1);
                             const inheritedRotSpeed = r.rotSpeed;
@@ -1480,6 +2304,7 @@
                                 spawnRock(1, r.x + offsetX, r.y, pieceVx, fanVelsY[k], smallHp, inheritedRotSpeed);
                             }
                         } else if (r.tier > 1) {
+                            // Split rock into 2 smaller pieces carrying parent's spin & momentum
                             const nextTier = r.tier - 1;
                             const nextConfig = ROCK_TIERS[nextTier];
                             const childHp = Math.max(1, Math.round(r.maxHp / 2));
@@ -1494,21 +2319,25 @@
                             spawnRock(nextTier, r.x - 14, r.y, leftVx, popUpVel, childHp, inheritedRotSpeed);
                             spawnRock(nextTier, r.x + 14, r.y, rightVx, popUpVel, childHp, inheritedRotSpeed);
                         } else if (r.tier === 1) {
+                            // Every destroyed little gold rock becomes a shiny bouncing gold nugget
                             spawnGoldNugget(r.x, r.y, r.vx, r.rotSpeed);
                         }
                         rocks.splice(i, 1);
 
+                        // Clear all active rocks before another spawns to advance to the next level
                         if (rocks.length === 0) {
                             shouldAdvanceLevel = true;
                         }
                         break;
+                    } else {
+                        SoftAudio.playRockHit(r.tier);
                     }
                 }
             }
 
             if (rockDestroyed) continue;
 
-            // Check Collision with Cannon (Game Over)
+            // Rock vs Cannon Collision
             const cannonCenterX = cannon.x;
             const cannonCenterY = cannon.y - 21;
             const cannonHitRadius = 21;
@@ -1523,7 +2352,7 @@
             }
         }
 
-        // Update Bouncing Gold Nuggets & Check Cannon Collection
+        // Update Bouncing Gold Nuggets & Cannon Collection
         for (let i = nuggets.length - 1; i >= 0; i--) {
             const n = nuggets[i];
             n.vy += gravity * 0.85 * dt;
@@ -1566,6 +2395,7 @@
                 }
             }
 
+            // Cannon collects gold nugget when it lands on or touches the cannon
             const cannonCenterX = cannon.x;
             const cannonCenterY = cannon.y - 22;
             const pickupRadius = 34;
@@ -1574,11 +2404,10 @@
             const collectDist = n.radius + pickupRadius;
 
             if (ndx * ndx + ndy * ndy <= collectDist * collectDist) {
-                if (!isAdminTest) {
-                    runNuggets += 1;
-                    regularGoldNuggets += 1;
-                }
-                nuggetDisplay.textContent = getFormattedGoldText();
+                runNuggets += 1;
+                goldNuggets += 1;
+                nuggetDisplay.textContent = goldNuggets;
+                SoftAudio.playNuggetCollect();
                 createParticles(n.x, n.y, '#fde047', 16);
                 createImpactRipple(n.x, n.y, 24, '#fef08a');
                 nuggets.splice(i, 1);
@@ -1590,53 +2419,37 @@
             return;
         }
 
-        for (let i = shockwaves.length - 1; i >= 0; i--) {
-            const s = shockwaves[i];
-            s.life -= dt;
-            s.y -= 35 * dt;
-            s.radius += (s.maxRadius - s.radius) * (1 - Math.exp(-12 * dt));
-            s.alpha = Math.max(0, (s.life / 0.28) * 0.75);
-            if (s.life <= 0) {
-                shockwaves.splice(i, 1);
-            }
-        }
-
-        for (let i = particles.length - 1; i >= 0; i--) {
-            const p = particles[i];
-            p.vy += 350 * dt;
-            p.x += p.vx * dt;
-            p.y += p.vy * dt;
-            p.life -= dt;
-            p.alpha = Math.max(0, p.life * 2);
-            if (p.life <= 0) {
-                particles.splice(i, 1);
-            }
-        }
+        updateEffects(dt);
     }
 
     function triggerGameOver() {
-        gameMode = 'gameover';
+        gameMode = 'exploding';
+        explosionTimer = 0.85;
         screenShake = 0;
         moveDir = 0;
         activePointerId = null;
         hideControlHints();
-        createParticles(cannon.x, cannon.y - 20, '#fbbf24', 25);
+        hudEl.classList.add('hidden');
+        spawnCannonExplosion(cannon.x, cannon.y);
+    }
+
+    function showGameOverScreen() {
+        gameMode = 'gameover';
+        screenShake = 0;
 
         if (score > highScore) {
             highScore = score;
             bestDisplay.textContent = highScore;
         }
 
-        hudEl.classList.add('hidden');
         finalScoreEl.textContent = score;
-        finalRunNuggetsEl.textContent = isAdminTest ? '∞ (Admin)' : `+${runNuggets}`;
-        finalNuggetsEl.textContent = getFormattedGoldText();
+        finalRunNuggetsEl.textContent = `+${runNuggets}`;
+        finalNuggetsEl.textContent = goldNuggets;
         finalLevelEl.textContent = currentLevel;
         finalBestEl.textContent = highScore;
         gameOverScreen.classList.remove('hidden');
     }
 
-    // Draw Everything in Virtual World Coordinates
     function draw() {
         ctx.save();
 
@@ -1648,7 +2461,7 @@
 
         ctx.clearRect(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
 
-        // Draw Background Clouds
+        // Background Clouds
         ctx.fillStyle = 'rgba(255, 255, 255, 0.22)';
         for (const c of clouds) {
             ctx.beginPath();
@@ -1658,7 +2471,7 @@
             ctx.fill();
         }
 
-        // Draw Ground
+        // Ground & Grass Strip
         const floorY = WORLD_HEIGHT - groundHeight;
         ctx.fillStyle = '#22c55e';
         ctx.fillRect(0, floorY, WORLD_WIDTH, 16);
@@ -1683,17 +2496,22 @@
             ctx.restore();
         }
 
-        // Draw Cannon with Wheels
-        drawCannon();
+        // Draw Cannon (if not destroyed)
+        if (!cannon.destroyed) {
+            drawCannon();
+        }
 
-        // Draw Upward Impact Ripples under shot rocks
+        // Draw Flying Cannon Debris
+        drawDebris();
+
+        // Draw Upward Impact Ripples & Shockwaves
         for (const s of shockwaves) {
             ctx.save();
             ctx.globalAlpha = s.alpha;
             ctx.strokeStyle = s.color;
-            ctx.lineWidth = 3;
+            ctx.lineWidth = 3.5;
             ctx.beginPath();
-            ctx.ellipse(s.x, s.y, s.radius, s.radius * 0.34, 0, 0, Math.PI * 2);
+            ctx.ellipse(s.x, s.y, s.radius, s.radius * 0.38, 0, 0, Math.PI * 2);
             ctx.stroke();
             ctx.restore();
         }
@@ -1703,12 +2521,15 @@
             drawGoldNugget(n);
         }
 
-        // Draw Rocks with Numbers
+        // Draw Rocks
         for (const r of rocks) {
             drawRock(r);
         }
 
-        // Draw Particles
+        // Draw Fireball Explosions
+        drawExplosions();
+
+        // Draw Particles & Smoke
         for (const p of particles) {
             ctx.save();
             ctx.globalAlpha = p.alpha;
@@ -1722,12 +2543,79 @@
         ctx.restore();
     }
 
+    function drawExplosions() {
+        for (const ex of explosions) {
+            const alpha = Math.max(0, ex.life / ex.maxLife);
+            ctx.save();
+            ctx.globalAlpha = alpha;
+
+            const grad = ctx.createRadialGradient(
+                ex.x, ex.y, ex.radius * 0.08,
+                ex.x, ex.y, ex.radius
+            );
+            grad.addColorStop(0, '#ffffff');
+            grad.addColorStop(0.28, '#fef08a');
+            grad.addColorStop(0.58, '#f97316');
+            grad.addColorStop(0.84, 'rgba(220, 38, 38, 0.78)');
+            grad.addColorStop(1, 'rgba(15, 23, 42, 0)');
+
+            ctx.fillStyle = grad;
+            ctx.beginPath();
+            ctx.arc(ex.x, ex.y, ex.radius, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        }
+    }
+
+    function drawDebris() {
+        for (const d of debris) {
+            if (d.type === 'wheel') {
+                drawWheel(d.x, d.y, d.radius, d.rotation);
+            } else if (d.type === 'barrel') {
+                ctx.save();
+                ctx.translate(d.x, d.y);
+                ctx.rotate(d.rotation);
+                ctx.fillStyle = '#334155';
+                ctx.strokeStyle = '#0f172a';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.roundRect(-11, -17, 22, 34, 4);
+                ctx.fill();
+                ctx.stroke();
+
+                ctx.fillStyle = '#475569';
+                ctx.beginPath();
+                ctx.roundRect(-14, -20, 28, 9, 3);
+                ctx.fill();
+                ctx.stroke();
+                ctx.restore();
+            } else if (d.type === 'shard') {
+                ctx.save();
+                ctx.translate(d.x, d.y);
+                ctx.rotate(d.rotation);
+                ctx.fillStyle = d.color;
+                ctx.strokeStyle = '#0f172a';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(-d.w / 2, -d.h / 2);
+                ctx.lineTo(d.w / 2, -d.h / 3);
+                ctx.lineTo(d.w / 3, d.h / 2);
+                ctx.lineTo(-d.w / 2, d.h / 3);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+                ctx.restore();
+            }
+        }
+    }
+
     function drawGoldNugget(n) {
         const pulse = 0.8 + Math.sin(n.shimmer) * 0.2;
 
         ctx.save();
         ctx.translate(n.x, n.y);
 
+        // Warm golden aura glow
         const glow = ctx.createRadialGradient(0, 0, 2, 0, 0, n.radius * 2.1);
         glow.addColorStop(0, `rgba(254, 240, 138, ${0.75 * pulse})`);
         glow.addColorStop(0.55, `rgba(250, 204, 21, ${0.32 * pulse})`);
@@ -1737,6 +2625,7 @@
         ctx.arc(0, 0, n.radius * 2.1, 0, Math.PI * 2);
         ctx.fill();
 
+        // Faceted gold nugget body
         ctx.save();
         ctx.rotate(n.rotation);
         ctx.beginPath();
@@ -1759,12 +2648,14 @@
         ctx.strokeStyle = '#854d0e';
         ctx.stroke();
 
+        // Specular shine highlight
         ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
         ctx.beginPath();
         ctx.ellipse(-2.5, -2.5, 4, 2.2, -0.5, 0, Math.PI * 2);
         ctx.fill();
         ctx.restore();
 
+        // Crisp twinkling star glint on top-left corner
         const glintScale = 0.65 + Math.max(0, Math.sin(n.shimmer * 1.3)) * 0.65;
         ctx.save();
         ctx.translate(-n.radius * 0.45, -n.radius * 0.45);
@@ -1794,6 +2685,7 @@
 
         ctx.save();
 
+        // Carriage & Barrel Group (tilts & dips smoothly on suspension)
         ctx.save();
         ctx.translate(cx, wheelY + cannon.bobOffset);
         ctx.rotate(cannon.tilt);
@@ -1802,6 +2694,7 @@
         const barrelH = 35;
         const barrelTopY = -barrelH + cannon.recoil;
 
+        // Vertical Barrel
         ctx.fillStyle = '#334155';
         ctx.strokeStyle = '#0f172a';
         ctx.lineWidth = 3;
@@ -1810,12 +2703,14 @@
         ctx.fill();
         ctx.stroke();
 
+        // Barrel Muzzle Rim
         ctx.fillStyle = '#475569';
         ctx.beginPath();
         ctx.roundRect(-barrelW / 2 - 3, barrelTopY - 3, barrelW + 6, 9, 3);
         ctx.fill();
         ctx.stroke();
 
+        // Carriage Base Body
         ctx.fillStyle = '#2563eb';
         ctx.beginPath();
         ctx.arc(0, -4, 19, Math.PI, 0);
@@ -1826,6 +2721,7 @@
         ctx.stroke();
         ctx.restore();
 
+        // Left & Right Rolling Wheels
         drawWheel(cx - wheelOffset, wheelY, cannon.wheelRadius, cannon.wheelAngle);
         drawWheel(cx + wheelOffset, wheelY, cannon.wheelRadius, cannon.wheelAngle);
 
@@ -1913,6 +2809,7 @@
         ctx.strokeStyle = config.borderColor;
         ctx.stroke();
 
+        // Surface craters so rock spin direction and speed are visually clear
         ctx.fillStyle = r.hitFlash > 0
             ? 'rgba(15, 23, 42, 0.15)'
             : (r.tier === 4 ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.18)');
@@ -1922,6 +2819,7 @@
         ctx.fill();
         ctx.restore();
 
+        // Upright Hit Counter Number
         ctx.fillStyle = r.hitFlash > 0 ? '#0f172a' : '#ffffff';
         ctx.strokeStyle = 'rgba(0, 0, 0, 0.65)';
         ctx.lineWidth = 4;
@@ -1934,13 +2832,14 @@
         ctx.restore();
     }
 
-    // Continuous Animation Loop (handles Menu backdrop, Active Gameplay, and Paused state)
     function gameLoop(timestamp) {
         const dt = Math.min((timestamp - lastTime) / 1000, 0.05);
         lastTime = timestamp;
 
         if (gameMode === 'playing') {
             update(dt);
+        } else if (gameMode === 'exploding') {
+            updateExplosionSequence(dt);
         } else if (gameMode === 'menu') {
             updateMenuBackground(dt);
         }
@@ -1952,6 +2851,8 @@
     // Initialize and launch Main Menu
     resize();
     initClouds();
+    renderSoundSettings();
+    updateMuteButtons();
     openMainMenu();
     lastTime = performance.now();
     requestAnimationFrame(gameLoop);
